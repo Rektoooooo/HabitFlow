@@ -6,7 +6,45 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		EC90E15C2F183BB1004BE865 /* HabitFlowWatch Watch App.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = EC90E15B2F183BB1004BE865 /* HabitFlowWatch Watch App.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		EC90E18E2F183BFE004BE865 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ECD981FC2F15726E0005D032 /* WidgetKit.framework */; };
+		EC90E18F2F183BFE004BE865 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ECD981FE2F15726F0005D032 /* SwiftUI.framework */; };
+		EC90E19E2F183BFF004BE865 /* HabitFlowWatchWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = EC90E18D2F183BFE004BE865 /* HabitFlowWatchWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		ECD9823C2F1577090005D032 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ECD981FC2F15726E0005D032 /* WidgetKit.framework */; };
+		ECD9823D2F1577090005D032 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ECD981FE2F15726F0005D032 /* SwiftUI.framework */; };
+		ECD9824E2F15770B0005D032 /* HabitFlowWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = ECD9823B2F1577090005D032 /* HabitFlowWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
+		EC90E15D2F183BB1004BE865 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = ECD981952F151D860005D032 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = EC90E15A2F183BB1004BE865;
+			remoteInfo = "HabitFlowWatch Watch App";
+		};
+		EC90E16B2F183BB3004BE865 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = ECD981952F151D860005D032 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = EC90E15A2F183BB1004BE865;
+			remoteInfo = "HabitFlowWatch Watch App";
+		};
+		EC90E1752F183BB3004BE865 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = ECD981952F151D860005D032 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = EC90E15A2F183BB1004BE865;
+			remoteInfo = "HabitFlowWatch Watch App";
+		};
+		EC90E19C2F183BFF004BE865 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = ECD981952F151D860005D032 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = EC90E18C2F183BFE004BE865;
+			remoteInfo = HabitFlowWatchWidgetExtension;
+		};
 		ECD981AB2F151D880005D032 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = ECD981952F151D860005D032 /* Project object */;
@@ -21,15 +59,107 @@
 			remoteGlobalIDString = ECD9819C2F151D860005D032;
 			remoteInfo = HabitTracker;
 		};
+		ECD9824C2F15770B0005D032 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = ECD981952F151D860005D032 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = ECD9823A2F1577090005D032;
+			remoteInfo = HabitFlowWidgetExtension;
+		};
 /* End PBXContainerItemProxy section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		EC90E17F2F183BB3004BE865 /* Embed Watch Content */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "$(CONTENTS_FOLDER_PATH)/Watch";
+			dstSubfolderSpec = 16;
+			files = (
+				EC90E15C2F183BB1004BE865 /* HabitFlowWatch Watch App.app in Embed Watch Content */,
+			);
+			name = "Embed Watch Content";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		EC90E1A32F183BFF004BE865 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				EC90E19E2F183BFF004BE865 /* HabitFlowWatchWidgetExtension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		ECD982152F1572710005D032 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				ECD9824E2F15770B0005D032 /* HabitFlowWidgetExtension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
+		EC90E1562F183BB1004BE865 /* HabitFlowWatch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HabitFlowWatch.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		EC90E15B2F183BB1004BE865 /* HabitFlowWatch Watch App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "HabitFlowWatch Watch App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		EC90E16A2F183BB3004BE865 /* HabitFlowWatch Watch AppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "HabitFlowWatch Watch AppTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		EC90E1742F183BB3004BE865 /* HabitFlowWatch Watch AppUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "HabitFlowWatch Watch AppUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		EC90E18D2F183BFE004BE865 /* HabitFlowWatchWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = HabitFlowWatchWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		EC90E1A52F183CAD004BE865 /* HabitFlowWatchWidgetExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = HabitFlowWatchWidgetExtension.entitlements; sourceTree = "<group>"; };
 		ECD9819D2F151D860005D032 /* HabitTracker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HabitTracker.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		ECD981AA2F151D880005D032 /* HabitTrackerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = HabitTrackerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		ECD981B42F151D880005D032 /* HabitTrackerUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = HabitTrackerUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		ECD981FC2F15726E0005D032 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
+		ECD981FE2F15726F0005D032 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
+		ECD9823B2F1577090005D032 /* HabitFlowWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = HabitFlowWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		EC90E19F2F183BFF004BE865 /* Exceptions for "HabitFlowWatchWidget" folder in "HabitFlowWatchWidgetExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = EC90E18C2F183BFE004BE865 /* HabitFlowWatchWidgetExtension */;
+		};
+		ECD9824F2F15770B0005D032 /* Exceptions for "HabitFlowWidget" folder in "HabitFlowWidgetExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = ECD9823A2F1577090005D032 /* HabitFlowWidgetExtension */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		EC90E15F2F183BB1004BE865 /* HabitFlowWatch Watch App */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = "HabitFlowWatch Watch App";
+			sourceTree = "<group>";
+		};
+		EC90E16D2F183BB3004BE865 /* HabitFlowWatch Watch AppTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = "HabitFlowWatch Watch AppTests";
+			sourceTree = "<group>";
+		};
+		EC90E1772F183BB3004BE865 /* HabitFlowWatch Watch AppUITests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = "HabitFlowWatch Watch AppUITests";
+			sourceTree = "<group>";
+		};
+		EC90E1902F183BFE004BE865 /* HabitFlowWatchWidget */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				EC90E19F2F183BFF004BE865 /* Exceptions for "HabitFlowWatchWidget" folder in "HabitFlowWatchWidgetExtension" target */,
+			);
+			path = HabitFlowWatchWidget;
+			sourceTree = "<group>";
+		};
 		ECD9819F2F151D860005D032 /* HabitTracker */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = HabitTracker;
@@ -45,9 +175,47 @@
 			path = HabitTrackerUITests;
 			sourceTree = "<group>";
 		};
+		ECD9823E2F1577090005D032 /* HabitFlowWidget */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				ECD9824F2F15770B0005D032 /* Exceptions for "HabitFlowWidget" folder in "HabitFlowWidgetExtension" target */,
+			);
+			path = HabitFlowWidget;
+			sourceTree = "<group>";
+		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		EC90E1582F183BB1004BE865 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		EC90E1672F183BB3004BE865 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		EC90E1712F183BB3004BE865 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		EC90E18A2F183BFE004BE865 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				EC90E18F2F183BFE004BE865 /* SwiftUI.framework in Frameworks */,
+				EC90E18E2F183BFE004BE865 /* WidgetKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		ECD9819A2F151D860005D032 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -69,15 +237,31 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		ECD982382F1577090005D032 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				ECD9823D2F1577090005D032 /* SwiftUI.framework in Frameworks */,
+				ECD9823C2F1577090005D032 /* WidgetKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
 		ECD981942F151D860005D032 = {
 			isa = PBXGroup;
 			children = (
+				EC90E1A52F183CAD004BE865 /* HabitFlowWatchWidgetExtension.entitlements */,
 				ECD9819F2F151D860005D032 /* HabitTracker */,
 				ECD981AD2F151D880005D032 /* HabitTrackerTests */,
 				ECD981B72F151D880005D032 /* HabitTrackerUITests */,
+				ECD9823E2F1577090005D032 /* HabitFlowWidget */,
+				EC90E15F2F183BB1004BE865 /* HabitFlowWatch Watch App */,
+				EC90E16D2F183BB3004BE865 /* HabitFlowWatch Watch AppTests */,
+				EC90E1772F183BB3004BE865 /* HabitFlowWatch Watch AppUITests */,
+				EC90E1902F183BFE004BE865 /* HabitFlowWatchWidget */,
+				ECD981FB2F15726E0005D032 /* Frameworks */,
 				ECD9819E2F151D860005D032 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -88,13 +272,139 @@
 				ECD9819D2F151D860005D032 /* HabitTracker.app */,
 				ECD981AA2F151D880005D032 /* HabitTrackerTests.xctest */,
 				ECD981B42F151D880005D032 /* HabitTrackerUITests.xctest */,
+				ECD9823B2F1577090005D032 /* HabitFlowWidgetExtension.appex */,
+				EC90E1562F183BB1004BE865 /* HabitFlowWatch.app */,
+				EC90E15B2F183BB1004BE865 /* HabitFlowWatch Watch App.app */,
+				EC90E16A2F183BB3004BE865 /* HabitFlowWatch Watch AppTests.xctest */,
+				EC90E1742F183BB3004BE865 /* HabitFlowWatch Watch AppUITests.xctest */,
+				EC90E18D2F183BFE004BE865 /* HabitFlowWatchWidgetExtension.appex */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		ECD981FB2F15726E0005D032 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				ECD981FC2F15726E0005D032 /* WidgetKit.framework */,
+				ECD981FE2F15726F0005D032 /* SwiftUI.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		EC90E1552F183BB1004BE865 /* HabitFlowWatch */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = EC90E1802F183BB3004BE865 /* Build configuration list for PBXNativeTarget "HabitFlowWatch" */;
+			buildPhases = (
+				EC90E1542F183BB1004BE865 /* Resources */,
+				EC90E17F2F183BB3004BE865 /* Embed Watch Content */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				EC90E15E2F183BB1004BE865 /* PBXTargetDependency */,
+			);
+			name = HabitFlowWatch;
+			packageProductDependencies = (
+			);
+			productName = HabitFlowWatch;
+			productReference = EC90E1562F183BB1004BE865 /* HabitFlowWatch.app */;
+			productType = "com.apple.product-type.application.watchapp2-container";
+		};
+		EC90E15A2F183BB1004BE865 /* HabitFlowWatch Watch App */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = EC90E17C2F183BB3004BE865 /* Build configuration list for PBXNativeTarget "HabitFlowWatch Watch App" */;
+			buildPhases = (
+				EC90E1572F183BB1004BE865 /* Sources */,
+				EC90E1582F183BB1004BE865 /* Frameworks */,
+				EC90E1592F183BB1004BE865 /* Resources */,
+				EC90E1A32F183BFF004BE865 /* Embed Foundation Extensions */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				EC90E19D2F183BFF004BE865 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				EC90E15F2F183BB1004BE865 /* HabitFlowWatch Watch App */,
+			);
+			name = "HabitFlowWatch Watch App";
+			packageProductDependencies = (
+			);
+			productName = "HabitFlowWatch Watch App";
+			productReference = EC90E15B2F183BB1004BE865 /* HabitFlowWatch Watch App.app */;
+			productType = "com.apple.product-type.application";
+		};
+		EC90E1692F183BB3004BE865 /* HabitFlowWatch Watch AppTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = EC90E1832F183BB3004BE865 /* Build configuration list for PBXNativeTarget "HabitFlowWatch Watch AppTests" */;
+			buildPhases = (
+				EC90E1662F183BB3004BE865 /* Sources */,
+				EC90E1672F183BB3004BE865 /* Frameworks */,
+				EC90E1682F183BB3004BE865 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				EC90E16C2F183BB3004BE865 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				EC90E16D2F183BB3004BE865 /* HabitFlowWatch Watch AppTests */,
+			);
+			name = "HabitFlowWatch Watch AppTests";
+			packageProductDependencies = (
+			);
+			productName = "HabitFlowWatch Watch AppTests";
+			productReference = EC90E16A2F183BB3004BE865 /* HabitFlowWatch Watch AppTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		EC90E1732F183BB3004BE865 /* HabitFlowWatch Watch AppUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = EC90E1862F183BB3004BE865 /* Build configuration list for PBXNativeTarget "HabitFlowWatch Watch AppUITests" */;
+			buildPhases = (
+				EC90E1702F183BB3004BE865 /* Sources */,
+				EC90E1712F183BB3004BE865 /* Frameworks */,
+				EC90E1722F183BB3004BE865 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				EC90E1762F183BB3004BE865 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				EC90E1772F183BB3004BE865 /* HabitFlowWatch Watch AppUITests */,
+			);
+			name = "HabitFlowWatch Watch AppUITests";
+			packageProductDependencies = (
+			);
+			productName = "HabitFlowWatch Watch AppUITests";
+			productReference = EC90E1742F183BB3004BE865 /* HabitFlowWatch Watch AppUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+		EC90E18C2F183BFE004BE865 /* HabitFlowWatchWidgetExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = EC90E1A02F183BFF004BE865 /* Build configuration list for PBXNativeTarget "HabitFlowWatchWidgetExtension" */;
+			buildPhases = (
+				EC90E1892F183BFE004BE865 /* Sources */,
+				EC90E18A2F183BFE004BE865 /* Frameworks */,
+				EC90E18B2F183BFE004BE865 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				EC90E1902F183BFE004BE865 /* HabitFlowWatchWidget */,
+			);
+			name = HabitFlowWatchWidgetExtension;
+			packageProductDependencies = (
+			);
+			productName = HabitFlowWatchWidgetExtension;
+			productReference = EC90E18D2F183BFE004BE865 /* HabitFlowWatchWidgetExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 		ECD9819C2F151D860005D032 /* HabitTracker */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = ECD981BE2F151D880005D032 /* Build configuration list for PBXNativeTarget "HabitTracker" */;
@@ -102,10 +412,12 @@
 				ECD981992F151D860005D032 /* Sources */,
 				ECD9819A2F151D860005D032 /* Frameworks */,
 				ECD9819B2F151D860005D032 /* Resources */,
+				ECD982152F1572710005D032 /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				ECD9824D2F15770B0005D032 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				ECD9819F2F151D860005D032 /* HabitTracker */,
@@ -163,6 +475,28 @@
 			productReference = ECD981B42F151D880005D032 /* HabitTrackerUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
+		ECD9823A2F1577090005D032 /* HabitFlowWidgetExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = ECD982502F15770B0005D032 /* Build configuration list for PBXNativeTarget "HabitFlowWidgetExtension" */;
+			buildPhases = (
+				ECD982372F1577090005D032 /* Sources */,
+				ECD982382F1577090005D032 /* Frameworks */,
+				ECD982392F1577090005D032 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				ECD9823E2F1577090005D032 /* HabitFlowWidget */,
+			);
+			name = HabitFlowWidgetExtension;
+			packageProductDependencies = (
+			);
+			productName = HabitFlowWidgetExtension;
+			productReference = ECD9823B2F1577090005D032 /* HabitFlowWidgetExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -173,6 +507,23 @@
 				LastSwiftUpdateCheck = 2600;
 				LastUpgradeCheck = 2600;
 				TargetAttributes = {
+					EC90E1552F183BB1004BE865 = {
+						CreatedOnToolsVersion = 26.0.1;
+					};
+					EC90E15A2F183BB1004BE865 = {
+						CreatedOnToolsVersion = 26.0.1;
+					};
+					EC90E1692F183BB3004BE865 = {
+						CreatedOnToolsVersion = 26.0.1;
+						TestTargetID = EC90E15A2F183BB1004BE865;
+					};
+					EC90E1732F183BB3004BE865 = {
+						CreatedOnToolsVersion = 26.0.1;
+						TestTargetID = EC90E15A2F183BB1004BE865;
+					};
+					EC90E18C2F183BFE004BE865 = {
+						CreatedOnToolsVersion = 26.0.1;
+					};
 					ECD9819C2F151D860005D032 = {
 						CreatedOnToolsVersion = 26.0.1;
 					};
@@ -183,6 +534,9 @@
 					ECD981B32F151D880005D032 = {
 						CreatedOnToolsVersion = 26.0.1;
 						TestTargetID = ECD9819C2F151D860005D032;
+					};
+					ECD9823A2F1577090005D032 = {
+						CreatedOnToolsVersion = 26.0.1;
 					};
 				};
 			};
@@ -203,11 +557,52 @@
 				ECD9819C2F151D860005D032 /* HabitTracker */,
 				ECD981A92F151D880005D032 /* HabitTrackerTests */,
 				ECD981B32F151D880005D032 /* HabitTrackerUITests */,
+				ECD9823A2F1577090005D032 /* HabitFlowWidgetExtension */,
+				EC90E1552F183BB1004BE865 /* HabitFlowWatch */,
+				EC90E15A2F183BB1004BE865 /* HabitFlowWatch Watch App */,
+				EC90E1692F183BB3004BE865 /* HabitFlowWatch Watch AppTests */,
+				EC90E1732F183BB3004BE865 /* HabitFlowWatch Watch AppUITests */,
+				EC90E18C2F183BFE004BE865 /* HabitFlowWatchWidgetExtension */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		EC90E1542F183BB1004BE865 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		EC90E1592F183BB1004BE865 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		EC90E1682F183BB3004BE865 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		EC90E1722F183BB3004BE865 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		EC90E18B2F183BFE004BE865 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		ECD9819B2F151D860005D032 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -229,9 +624,44 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		ECD982392F1577090005D032 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		EC90E1572F183BB1004BE865 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		EC90E1662F183BB3004BE865 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		EC90E1702F183BB3004BE865 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		EC90E1892F183BFE004BE865 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		ECD981992F151D860005D032 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -253,9 +683,36 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		ECD982372F1577090005D032 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		EC90E15E2F183BB1004BE865 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = EC90E15A2F183BB1004BE865 /* HabitFlowWatch Watch App */;
+			targetProxy = EC90E15D2F183BB1004BE865 /* PBXContainerItemProxy */;
+		};
+		EC90E16C2F183BB3004BE865 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = EC90E15A2F183BB1004BE865 /* HabitFlowWatch Watch App */;
+			targetProxy = EC90E16B2F183BB3004BE865 /* PBXContainerItemProxy */;
+		};
+		EC90E1762F183BB3004BE865 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = EC90E15A2F183BB1004BE865 /* HabitFlowWatch Watch App */;
+			targetProxy = EC90E1752F183BB3004BE865 /* PBXContainerItemProxy */;
+		};
+		EC90E19D2F183BFF004BE865 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = EC90E18C2F183BFE004BE865 /* HabitFlowWatchWidgetExtension */;
+			targetProxy = EC90E19C2F183BFF004BE865 /* PBXContainerItemProxy */;
+		};
 		ECD981AC2F151D880005D032 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = ECD9819C2F151D860005D032 /* HabitTracker */;
@@ -266,9 +723,272 @@
 			target = ECD9819C2F151D860005D032 /* HabitTracker */;
 			targetProxy = ECD981B52F151D880005D032 /* PBXContainerItemProxy */;
 		};
+		ECD9824D2F15770B0005D032 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = ECD9823A2F1577090005D032 /* HabitFlowWidgetExtension */;
+			targetProxy = ECD9824C2F15770B0005D032 /* PBXContainerItemProxy */;
+		};
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
+		EC90E17D2F183BB3004BE865 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "HabitFlowWatch Watch App/HabitFlowWatch Watch App.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = PH3V9JYRDW;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = HabitFlowWatch;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				INFOPLIST_KEY_WKWatchOnly = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "ic-servis.com.HabitFlowWatch.watchkitapp";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 26.0;
+			};
+			name = Debug;
+		};
+		EC90E17E2F183BB3004BE865 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "HabitFlowWatch Watch App/HabitFlowWatch Watch App.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = PH3V9JYRDW;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = HabitFlowWatch;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				INFOPLIST_KEY_WKWatchOnly = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "ic-servis.com.HabitFlowWatch.watchkitapp";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 26.0;
+			};
+			name = Release;
+		};
+		EC90E1812F183BB3004BE865 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = PH3V9JYRDW;
+				INFOPLIST_KEY_CFBundleDisplayName = HabitFlowWatch;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "ic-servis.com.HabitFlowWatch";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		EC90E1822F183BB3004BE865 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = PH3V9JYRDW;
+				INFOPLIST_KEY_CFBundleDisplayName = HabitFlowWatch;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "ic-servis.com.HabitFlowWatch";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		EC90E1842F183BB3004BE865 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = PH3V9JYRDW;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "ic-servis.com.HabitFlowWatch-Watch-AppTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/HabitFlowWatch Watch App.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/HabitFlowWatch Watch App";
+				WATCHOS_DEPLOYMENT_TARGET = 26.0;
+			};
+			name = Debug;
+		};
+		EC90E1852F183BB3004BE865 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = PH3V9JYRDW;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "ic-servis.com.HabitFlowWatch-Watch-AppTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/HabitFlowWatch Watch App.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/HabitFlowWatch Watch App";
+				WATCHOS_DEPLOYMENT_TARGET = 26.0;
+			};
+			name = Release;
+		};
+		EC90E1872F183BB3004BE865 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = PH3V9JYRDW;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "ic-servis.com.HabitFlowWatch-Watch-AppUITests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				TEST_TARGET_NAME = "HabitFlowWatch Watch App";
+				WATCHOS_DEPLOYMENT_TARGET = 26.0;
+			};
+			name = Debug;
+		};
+		EC90E1882F183BB3004BE865 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = PH3V9JYRDW;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "ic-servis.com.HabitFlowWatch-Watch-AppUITests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				TEST_TARGET_NAME = "HabitFlowWatch Watch App";
+				WATCHOS_DEPLOYMENT_TARGET = 26.0;
+			};
+			name = Release;
+		};
+		EC90E1A12F183BFF004BE865 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_ENTITLEMENTS = HabitFlowWatchWidgetExtension.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = PH3V9JYRDW;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = HabitFlowWatchWidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = HabitFlowWatchWidget;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "ic-servis.com.HabitFlowWatch.watchkitapp.HabitFlowWatchWidget";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 26.0;
+			};
+			name = Debug;
+		};
+		EC90E1A22F183BFF004BE865 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_ENTITLEMENTS = HabitFlowWatchWidgetExtension.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = PH3V9JYRDW;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = HabitFlowWatchWidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = HabitFlowWatchWidget;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "ic-servis.com.HabitFlowWatch.watchkitapp.HabitFlowWatchWidget";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 26.0;
+			};
+			name = Release;
+		};
 		ECD981BC2F151D880005D032 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -395,16 +1115,18 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = HabitTracker/HabitTracker.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = PH3V9JYRDW;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHealthShareUsageDescription = "HabitFlow uses your health data to automatically track sleep, water intake, and calories for your habits.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -427,16 +1149,18 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = HabitTracker/HabitTracker.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = PH3V9JYRDW;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHealthShareUsageDescription = "HabitFlow uses your health data to automatically track sleep, water intake, and calories for your habits.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -538,9 +1262,116 @@
 			};
 			name = Release;
 		};
+		ECD982512F15770B0005D032 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_ENTITLEMENTS = HabitFlowWidget/HabitFlowWidget.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = PH3V9JYRDW;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = HabitFlowWidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = HabitFlowWidget;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "ic-servis.com.HabitTracker.HabitFlowWidget";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		ECD982522F15770B0005D032 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_ENTITLEMENTS = HabitFlowWidget/HabitFlowWidget.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = PH3V9JYRDW;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = HabitFlowWidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = HabitFlowWidget;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "ic-servis.com.HabitTracker.HabitFlowWidget";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		EC90E17C2F183BB3004BE865 /* Build configuration list for PBXNativeTarget "HabitFlowWatch Watch App" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				EC90E17D2F183BB3004BE865 /* Debug */,
+				EC90E17E2F183BB3004BE865 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		EC90E1802F183BB3004BE865 /* Build configuration list for PBXNativeTarget "HabitFlowWatch" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				EC90E1812F183BB3004BE865 /* Debug */,
+				EC90E1822F183BB3004BE865 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		EC90E1832F183BB3004BE865 /* Build configuration list for PBXNativeTarget "HabitFlowWatch Watch AppTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				EC90E1842F183BB3004BE865 /* Debug */,
+				EC90E1852F183BB3004BE865 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		EC90E1862F183BB3004BE865 /* Build configuration list for PBXNativeTarget "HabitFlowWatch Watch AppUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				EC90E1872F183BB3004BE865 /* Debug */,
+				EC90E1882F183BB3004BE865 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		EC90E1A02F183BFF004BE865 /* Build configuration list for PBXNativeTarget "HabitFlowWatchWidgetExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				EC90E1A12F183BFF004BE865 /* Debug */,
+				EC90E1A22F183BFF004BE865 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		ECD981982F151D860005D032 /* Build configuration list for PBXProject "HabitTracker" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -573,6 +1404,15 @@
 			buildConfigurations = (
 				ECD981C52F151D880005D032 /* Debug */,
 				ECD981C62F151D880005D032 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		ECD982502F15770B0005D032 /* Build configuration list for PBXNativeTarget "HabitFlowWidgetExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				ECD982512F15770B0005D032 /* Debug */,
+				ECD982522F15770B0005D032 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
