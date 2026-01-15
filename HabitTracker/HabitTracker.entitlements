@@ -9,7 +9,9 @@
 	<key>com.apple.developer.healthkit</key>
 	<true/>
 	<key>com.apple.developer.icloud-container-identifiers</key>
-	<array/>
+	<array>
+		<string>iCloud.ic-servis.com.HabitTracker</string>
+	</array>
 	<key>com.apple.security.application-groups</key>
 	<array>
 		<string>group.ic-servis.com.HabitTracker</string>

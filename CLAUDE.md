@@ -15,4 +15,4 @@ For every task, use the `ios-developer` skill to pick the best sub-skill for the
 
 ## App Group
 
-The app uses App Group `group.com.habitflow.app` for widget data sharing.
+The app uses App Group `group.ic-servis.com.HabitTracker` for widget data sharing.

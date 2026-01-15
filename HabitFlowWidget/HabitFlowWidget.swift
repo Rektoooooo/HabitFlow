@@ -8,6 +8,8 @@
 import WidgetKit
 import SwiftUI
 
+// MARK: - Provider
+
 struct Provider: AppIntentTimelineProvider {
     private let suiteName = "group.ic-servis.com.HabitTracker"
     private let habitsKey = "widgetHabits"
@@ -56,40 +58,23 @@ struct Provider: AppIntentTimelineProvider {
     }
 }
 
+// MARK: - Entry
+
 struct SimpleEntry: TimelineEntry {
     let date: Date
     let configuration: ConfigurationAppIntent
     let habits: [WidgetHabitData]
 }
 
-// MARK: - Theme Colors
+// MARK: - Widget Data Model
 
-struct WidgetTheme {
-    let colorScheme: ColorScheme
-
-    var primaryPurple: Color { Color(hex: "#A855F7") }
-    var primaryPink: Color { Color(hex: "#EC4899") }
-    var successGreen: Color { Color(hex: "#10B981") }
-
-    var primaryText: Color {
-        colorScheme == .dark ? .white : Color(hex: "#1F1535")
-    }
-
-    var secondaryText: Color {
-        colorScheme == .dark ? .white.opacity(0.6) : Color(hex: "#6B5B7A")
-    }
-
-    var cardBackground: Color {
-        colorScheme == .dark
-            ? Color.white.opacity(0.08)
-            : Color.white.opacity(0.7)
-    }
-
-    var cardBorder: Color {
-        colorScheme == .dark
-            ? Color.white.opacity(0.1)
-            : Color(hex: "#A855F7").opacity(0.15)
-    }
+struct WidgetHabitData: Codable, Identifiable {
+    let id: UUID
+    let name: String
+    let icon: String
+    let color: String
+    let isCompletedToday: Bool
+    let currentStreak: Int
 }
 
 // MARK: - Widget Entry View
@@ -137,7 +122,6 @@ struct SmallWidgetView: View {
 
     var body: some View {
         VStack(spacing: 10) {
-            // Progress Ring
             ZStack {
                 Circle()
                     .stroke(theme.cardBackground, lineWidth: 10)
@@ -202,7 +186,6 @@ struct MediumWidgetView: View {
 
     var body: some View {
         HStack(spacing: 14) {
-            // Left side - Progress Ring
             VStack(spacing: 6) {
                 ZStack {
                     Circle()
@@ -242,7 +225,6 @@ struct MediumWidgetView: View {
             }
             .frame(width: 80)
 
-            // Right side - Habits list
             VStack(alignment: .leading, spacing: 5) {
                 if habits.isEmpty {
                     emptyStateView
@@ -283,6 +265,8 @@ struct MediumWidgetView: View {
     }
 }
 
+// MARK: - Habit Row Medium
+
 struct HabitRowMedium: View {
     let habit: WidgetHabitData
     let theme: WidgetTheme
@@ -291,7 +275,6 @@ struct HabitRowMedium: View {
 
     var body: some View {
         HStack(spacing: 8) {
-            // Icon
             ZStack {
                 Circle()
                     .fill(habitColor.opacity(0.2))
@@ -309,7 +292,6 @@ struct HabitRowMedium: View {
 
             Spacer()
 
-            // Completion
             if habit.isCompletedToday {
                 Image(systemName: "checkmark.circle.fill")
                     .font(.system(size: 16))
@@ -349,9 +331,7 @@ struct LargeWidgetView: View {
 
     var body: some View {
         VStack(spacing: 8) {
-            // Header - more compact
             HStack(spacing: 10) {
-                // Progress Ring - smaller
                 ZStack {
                     Circle()
                         .stroke(theme.cardBackground, lineWidth: 5)
@@ -393,7 +373,6 @@ struct LargeWidgetView: View {
                         .font(.system(size: 10))
                         .foregroundStyle(theme.secondaryText)
 
-                    // Progress bar
                     GeometryReader { geo in
                         ZStack(alignment: .leading) {
                             RoundedRectangle(cornerRadius: 2)
@@ -419,7 +398,6 @@ struct LargeWidgetView: View {
                 Spacer()
             }
 
-            // Habits list
             if habits.isEmpty {
                 emptyStateView
             } else {
@@ -460,6 +438,8 @@ struct LargeWidgetView: View {
     }
 }
 
+// MARK: - Habit Row Large
+
 struct HabitRowLarge: View {
     let habit: WidgetHabitData
     let theme: WidgetTheme
@@ -468,7 +448,6 @@ struct HabitRowLarge: View {
 
     var body: some View {
         HStack(spacing: 8) {
-            // Icon - smaller
             ZStack {
                 Circle()
                     .fill(habitColor.opacity(0.2))
@@ -497,7 +476,6 @@ struct HabitRowLarge: View {
 
             Spacer()
 
-            // Completion - smaller
             if habit.isCompletedToday {
                 Image(systemName: "checkmark.circle.fill")
                     .font(.system(size: 18))
@@ -621,45 +599,6 @@ struct AccessoryInlineView: View {
     }
 }
 
-// MARK: - Widget Data Model
-
-struct WidgetHabitData: Codable, Identifiable {
-    let id: UUID
-    let name: String
-    let icon: String
-    let color: String
-    let isCompletedToday: Bool
-    let currentStreak: Int
-}
-
-// MARK: - Color Extension
-
-extension Color {
-    init(hex: String) {
-        let hex = hex.trimmingCharacters(in: CharacterSet.alphanumerics.inverted)
-        var int: UInt64 = 0
-        Scanner(string: hex).scanHexInt64(&int)
-        let a, r, g, b: UInt64
-        switch hex.count {
-        case 3:
-            (a, r, g, b) = (255, (int >> 8) * 17, (int >> 4 & 0xF) * 17, (int & 0xF) * 17)
-        case 6:
-            (a, r, g, b) = (255, int >> 16, int >> 8 & 0xFF, int & 0xFF)
-        case 8:
-            (a, r, g, b) = (int >> 24, int >> 16 & 0xFF, int >> 8 & 0xFF, int & 0xFF)
-        default:
-            (a, r, g, b) = (255, 0, 0, 0)
-        }
-        self.init(
-            .sRGB,
-            red: Double(r) / 255,
-            green: Double(g) / 255,
-            blue: Double(b) / 255,
-            opacity: Double(a) / 255
-        )
-    }
-}
-
 // MARK: - Widget Configuration
 
 struct HabitFlowWidget: Widget {
@@ -682,448 +621,6 @@ struct HabitFlowWidget: Widget {
             .accessoryRectangular,
             .accessoryInline
         ])
-    }
-}
-
-// MARK: - Habit History Widget
-
-struct HabitHistoryWidget: Widget {
-    let kind: String = "HabitHistoryWidget"
-
-    var body: some WidgetConfiguration {
-        AppIntentConfiguration(kind: kind, intent: HabitHistoryIntent.self, provider: HabitHistoryProvider()) { entry in
-            HabitHistoryWidgetView(entry: entry)
-                .containerBackground(for: .widget) {
-                    WidgetBackground()
-                }
-        }
-        .configurationDisplayName("Habit History")
-        .description("View the activity grid for a specific habit.")
-        .supportedFamilies([.systemSmall, .systemMedium])
-    }
-}
-
-// MARK: - Habit History Provider
-
-struct HabitHistoryProvider: AppIntentTimelineProvider {
-    private let suiteName = "group.ic-servis.com.HabitTracker"
-    private let historyKey = "widgetHabitHistory"
-
-    func placeholder(in context: Context) -> HabitHistoryEntry {
-        HabitHistoryEntry(
-            date: Date(),
-            configuration: HabitHistoryIntent(),
-            habitName: "Exercise",
-            habitIcon: "figure.run",
-            habitColor: "#A855F7",
-            completionDates: [],
-            currentStreak: 5
-        )
-    }
-
-    func snapshot(for configuration: HabitHistoryIntent, in context: Context) async -> HabitHistoryEntry {
-        return loadEntry(for: configuration)
-    }
-
-    func timeline(for configuration: HabitHistoryIntent, in context: Context) async -> Timeline<HabitHistoryEntry> {
-        let entry = loadEntry(for: configuration)
-        let refreshDate = Calendar.current.date(byAdding: .minute, value: 15, to: Date()) ?? Date()
-        return Timeline(entries: [entry], policy: .after(refreshDate))
-    }
-
-    private func loadEntry(for configuration: HabitHistoryIntent) -> HabitHistoryEntry {
-        guard let defaults = UserDefaults(suiteName: suiteName),
-              let data = defaults.data(forKey: historyKey),
-              let historyData = try? JSONDecoder().decode([HabitHistoryData].self, from: data),
-              let selectedHabit = configuration.selectedHabit,
-              let habitHistory = historyData.first(where: { $0.id.uuidString == selectedHabit.id }) else {
-
-            // Return placeholder if no habit selected
-            if let defaults = UserDefaults(suiteName: suiteName),
-               let data = defaults.data(forKey: historyKey),
-               let historyData = try? JSONDecoder().decode([HabitHistoryData].self, from: data),
-               let firstHabit = historyData.first {
-                return HabitHistoryEntry(
-                    date: Date(),
-                    configuration: configuration,
-                    habitName: firstHabit.name,
-                    habitIcon: firstHabit.icon,
-                    habitColor: firstHabit.color,
-                    completionDates: firstHabit.completionDates,
-                    currentStreak: firstHabit.currentStreak
-                )
-            }
-
-            return HabitHistoryEntry(
-                date: Date(),
-                configuration: configuration,
-                habitName: "Select a Habit",
-                habitIcon: "questionmark.circle",
-                habitColor: "#A855F7",
-                completionDates: [],
-                currentStreak: 0
-            )
-        }
-
-        return HabitHistoryEntry(
-            date: Date(),
-            configuration: configuration,
-            habitName: habitHistory.name,
-            habitIcon: habitHistory.icon,
-            habitColor: habitHistory.color,
-            completionDates: habitHistory.completionDates,
-            currentStreak: habitHistory.currentStreak
-        )
-    }
-}
-
-// MARK: - Habit History Entry
-
-struct HabitHistoryEntry: TimelineEntry {
-    let date: Date
-    let configuration: HabitHistoryIntent
-    let habitName: String
-    let habitIcon: String
-    let habitColor: String
-    let completionDates: [Date]
-    let currentStreak: Int
-}
-
-// MARK: - Habit History Data Model
-
-struct HabitHistoryData: Codable {
-    let id: UUID
-    let name: String
-    let icon: String
-    let color: String
-    let completionDates: [Date]
-    let currentStreak: Int
-}
-
-// MARK: - Habit History Widget View
-
-struct HabitHistoryWidgetView: View {
-    @Environment(\.colorScheme) var colorScheme
-    @Environment(\.widgetFamily) var widgetFamily
-    let entry: HabitHistoryEntry
-
-    private var theme: WidgetTheme {
-        WidgetTheme(colorScheme: colorScheme)
-    }
-
-    private var habitColor: Color {
-        Color(hex: entry.habitColor)
-    }
-
-    var body: some View {
-        switch widgetFamily {
-        case .systemSmall:
-            SmallHistoryView(entry: entry, theme: theme, habitColor: habitColor)
-        default:
-            MediumHistoryView(entry: entry, theme: theme, habitColor: habitColor)
-        }
-    }
-}
-
-// MARK: - Small History View
-
-struct SmallHistoryView: View {
-    let entry: HabitHistoryEntry
-    let theme: WidgetTheme
-    let habitColor: Color
-
-    var body: some View {
-        VStack(spacing: 8) {
-            // Header
-            HStack(spacing: 6) {
-                ZStack {
-                    Circle()
-                        .fill(habitColor.opacity(0.2))
-                        .frame(width: 28, height: 28)
-
-                    Image(systemName: entry.habitIcon)
-                        .font(.system(size: 12, weight: .semibold))
-                        .foregroundStyle(habitColor)
-                }
-
-                VStack(alignment: .leading, spacing: 1) {
-                    Text(entry.habitName)
-                        .font(.system(size: 12, weight: .semibold))
-                        .foregroundStyle(theme.primaryText)
-                        .lineLimit(1)
-
-                    HStack(spacing: 2) {
-                        Image(systemName: "flame.fill")
-                            .font(.system(size: 8))
-                            .foregroundStyle(.orange)
-                        Text("\(entry.currentStreak)")
-                            .font(.system(size: 9, weight: .medium))
-                            .foregroundStyle(theme.secondaryText)
-                    }
-                }
-
-                Spacer()
-            }
-
-            // Compact Grid - 7 weeks x 7 days
-            CompactHistoryGridView(
-                completionDates: entry.completionDates,
-                habitColor: habitColor,
-                theme: theme
-            )
-        }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-    }
-}
-
-// MARK: - Medium History View
-
-struct MediumHistoryView: View {
-    let entry: HabitHistoryEntry
-    let theme: WidgetTheme
-    let habitColor: Color
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 6) {
-            // Header
-            HStack(spacing: 8) {
-                ZStack {
-                    Circle()
-                        .fill(habitColor.opacity(0.2))
-                        .frame(width: 30, height: 30)
-
-                    Image(systemName: entry.habitIcon)
-                        .font(.system(size: 13, weight: .semibold))
-                        .foregroundStyle(habitColor)
-                }
-
-                VStack(alignment: .leading, spacing: 1) {
-                    Text(entry.habitName)
-                        .font(.system(size: 13, weight: .semibold))
-                        .foregroundStyle(theme.primaryText)
-                        .lineLimit(1)
-
-                    HStack(spacing: 3) {
-                        Image(systemName: "flame.fill")
-                            .font(.system(size: 9))
-                            .foregroundStyle(.orange)
-                        Text("\(entry.currentStreak) day streak")
-                            .font(.system(size: 10))
-                            .foregroundStyle(theme.secondaryText)
-                    }
-                }
-
-                Spacer()
-            }
-
-            // Full width grid
-            HistoryGridView(
-                completionDates: entry.completionDates,
-                habitColor: habitColor,
-                theme: theme
-            )
-        }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-    }
-}
-
-// MARK: - History Grid View (Medium Widget - 16 weeks)
-
-struct HistoryGridView: View {
-    let completionDates: [Date]
-    let habitColor: Color
-    let theme: WidgetTheme
-
-    private let columns = 16 // 16 weeks for medium widget
-    private let rows = 7 // 7 days
-    private let spacing: CGFloat = 2
-
-    private static let dateFormatter: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy-MM-dd"
-        return formatter
-    }()
-
-    private var completionSet: Set<String> {
-        Set(completionDates.map { Self.dateFormatter.string(from: $0) })
-    }
-
-    private func dateString(for date: Date) -> String {
-        Self.dateFormatter.string(from: date)
-    }
-
-    var body: some View {
-        let calendar = Calendar.current
-        let today = Date()
-
-        GeometryReader { geometry in
-            let horizontalSpacing = CGFloat(columns - 1) * spacing
-            let verticalSpacing = CGFloat(rows - 1) * spacing
-            let cellWidth = (geometry.size.width - horizontalSpacing) / CGFloat(columns)
-            let cellHeight = (geometry.size.height - verticalSpacing) / CGFloat(rows)
-            let cellSize = min(cellWidth, cellHeight)
-
-            HStack(alignment: .top, spacing: spacing) {
-                ForEach(0..<columns, id: \.self) { weekOffset in
-                    VStack(spacing: spacing) {
-                        ForEach(0..<rows, id: \.self) { dayOffset in
-                            let daysAgo = (columns - 1 - weekOffset) * 7 + (6 - dayOffset)
-                            let date = calendar.date(byAdding: .day, value: -daysAgo, to: today) ?? today
-                            let isCompleted = completionSet.contains(dateString(for: date))
-                            let isFuture = date > today
-
-                            RoundedRectangle(cornerRadius: 1.5)
-                                .fill(
-                                    isFuture
-                                        ? Color.clear
-                                        : isCompleted
-                                            ? habitColor
-                                            : theme.cardBackground
-                                )
-                                .frame(width: cellSize, height: cellSize)
-                        }
-                    }
-                }
-            }
-            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
-        }
-    }
-}
-
-// MARK: - Compact History Grid View (Small Widget - 7 weeks)
-
-struct CompactHistoryGridView: View {
-    let completionDates: [Date]
-    let habitColor: Color
-    let theme: WidgetTheme
-
-    private let columns = 7 // 7 weeks for small widget
-    private let rows = 7 // 7 days
-    private let spacing: CGFloat = 3
-
-    private static let dateFormatter: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy-MM-dd"
-        return formatter
-    }()
-
-    private var completionSet: Set<String> {
-        Set(completionDates.map { Self.dateFormatter.string(from: $0) })
-    }
-
-    private func dateString(for date: Date) -> String {
-        Self.dateFormatter.string(from: date)
-    }
-
-    var body: some View {
-        let calendar = Calendar.current
-        let today = Date()
-
-        GeometryReader { geometry in
-            let horizontalSpacing = CGFloat(columns - 1) * spacing
-            let verticalSpacing = CGFloat(rows - 1) * spacing
-            let cellWidth = (geometry.size.width - horizontalSpacing) / CGFloat(columns)
-            let cellHeight = (geometry.size.height - verticalSpacing) / CGFloat(rows)
-            let cellSize = min(cellWidth, cellHeight)
-
-            HStack(alignment: .top, spacing: spacing) {
-                ForEach(0..<columns, id: \.self) { weekOffset in
-                    VStack(spacing: spacing) {
-                        ForEach(0..<rows, id: \.self) { dayOffset in
-                            let daysAgo = (columns - 1 - weekOffset) * 7 + (6 - dayOffset)
-                            let date = calendar.date(byAdding: .day, value: -daysAgo, to: today) ?? today
-                            let isCompleted = completionSet.contains(dateString(for: date))
-                            let isFuture = date > today
-
-                            RoundedRectangle(cornerRadius: 2)
-                                .fill(
-                                    isFuture
-                                        ? Color.clear
-                                        : isCompleted
-                                            ? habitColor
-                                            : theme.cardBackground
-                                )
-                                .frame(width: cellSize, height: cellSize)
-                        }
-                    }
-                }
-            }
-            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
-        }
-    }
-}
-
-// MARK: - Widget Background
-
-struct WidgetBackground: View {
-    @Environment(\.colorScheme) var colorScheme
-
-    var body: some View {
-        if colorScheme == .dark {
-            // Dark mode: deep purple gradient
-            LinearGradient(
-                colors: [
-                    Color(hex: "#1a1625"),
-                    Color(hex: "#140f1f")
-                ],
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
-            )
-            .overlay(
-                RadialGradient(
-                    colors: [
-                        Color(hex: "#A855F7").opacity(0.15),
-                        Color.clear
-                    ],
-                    center: .topTrailing,
-                    startRadius: 0,
-                    endRadius: 200
-                )
-            )
-            .overlay(
-                RadialGradient(
-                    colors: [
-                        Color(hex: "#EC4899").opacity(0.1),
-                        Color.clear
-                    ],
-                    center: .bottomLeading,
-                    startRadius: 0,
-                    endRadius: 150
-                )
-            )
-        } else {
-            // Light mode: soft lavender/white
-            LinearGradient(
-                colors: [
-                    Color(hex: "#FAF8FC"),
-                    Color(hex: "#F3EEF8")
-                ],
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
-            )
-            .overlay(
-                RadialGradient(
-                    colors: [
-                        Color(hex: "#A855F7").opacity(0.08),
-                        Color.clear
-                    ],
-                    center: .topLeading,
-                    startRadius: 0,
-                    endRadius: 150
-                )
-            )
-            .overlay(
-                RadialGradient(
-                    colors: [
-                        Color(hex: "#EC4899").opacity(0.06),
-                        Color.clear
-                    ],
-                    center: .bottomTrailing,
-                    startRadius: 0,
-                    endRadius: 120
-                )
-            )
-        }
     }
 }
 

@@ -27,7 +27,7 @@ struct HabitTrackerApp: App {
             let modelConfiguration = ModelConfiguration(
                 schema: schema,
                 isStoredInMemoryOnly: false,
-                cloudKitDatabase: .private("iCloud.com.habitflow.app")
+                cloudKitDatabase: .private("iCloud.ic-servis.com.HabitTracker")
             )
 
             modelContainer = try ModelContainer(
