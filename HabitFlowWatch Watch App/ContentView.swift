@@ -32,21 +32,26 @@ struct ContentView: View {
 
                 ScrollView {
                     VStack(spacing: 12) {
-                        // Progress Header
-                        ProgressHeaderView(
-                            completed: dataManager.completedCount,
-                            total: dataManager.totalCount
-                        )
-                        .padding(.top, 4)
-
-                        // Habit List
-                        if dataManager.habits.isEmpty {
-                            emptyState
+                        // Check premium status
+                        if !dataManager.isPremium {
+                            premiumRequiredState
                         } else {
-                            ForEach(dataManager.habits) { habit in
-                                HabitRowView(habit: habit) {
-                                    withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
-                                        dataManager.toggleCompletion(for: habit.id)
+                            // Progress Header
+                            ProgressHeaderView(
+                                completed: dataManager.completedCount,
+                                total: dataManager.totalCount
+                            )
+                            .padding(.top, 4)
+
+                            // Habit List
+                            if dataManager.habits.isEmpty {
+                                emptyState
+                            } else {
+                                ForEach(dataManager.habits) { habit in
+                                    HabitRowView(habit: habit) {
+                                        withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                                            dataManager.toggleCompletion(for: habit.id)
+                                        }
                                     }
                                 }
                             }
@@ -61,6 +66,44 @@ struct ContentView: View {
         .onAppear {
             dataManager.loadHabits()
         }
+    }
+
+    // MARK: - Premium Required State
+
+    private var premiumRequiredState: some View {
+        VStack(spacing: 12) {
+            ZStack {
+                Circle()
+                    .fill(
+                        LinearGradient(
+                            colors: [Color.yellow.opacity(0.3), Color.orange.opacity(0.2)],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                    )
+                    .frame(width: 50, height: 50)
+
+                Image(systemName: "crown.fill")
+                    .font(.system(size: 24))
+                    .foregroundStyle(
+                        LinearGradient(
+                            colors: [.yellow, .orange],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                    )
+            }
+
+            Text("Premium Feature")
+                .font(.system(size: 16, weight: .semibold))
+                .foregroundStyle(.white)
+
+            Text("Upgrade to Premium on your iPhone to use the Watch app")
+                .font(.system(size: 11))
+                .foregroundStyle(.gray)
+                .multilineTextAlignment(.center)
+        }
+        .padding(.vertical, 20)
     }
 
     // MARK: - Empty State

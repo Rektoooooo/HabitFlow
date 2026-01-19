@@ -167,15 +167,23 @@ extension WatchConnectivityManagerWatch: WCSessionDelegate {
         Task { @MainActor in
             switch type {
             case "habitsUpdate":
+                // Extract premium status
+                let isPremium = data["isPremium"] as? Bool ?? false
+
                 if let habitsData = data["data"] as? Data,
                    let habits = try? JSONDecoder().decode([WatchHabitData].self, from: habitsData) {
-                    WatchDataManager.shared.saveHabits(habits)
+                    WatchDataManager.shared.saveHabits(habits, isPremium: isPremium)
                     #if DEBUG
-                    print("Received \(habits.count) habits from iPhone")
+                    print("Received \(habits.count) habits from iPhone (Premium: \(isPremium))")
                     #endif
 
-                    // Play notification haptic
-                    WKInterfaceDevice.current().play(.notification)
+                    // Play notification haptic only if premium
+                    if isPremium {
+                        WKInterfaceDevice.current().play(.notification)
+                    }
+                } else {
+                    // Update premium status even if no habits data
+                    WatchDataManager.shared.updatePremiumStatus(isPremium)
                 }
 
             default:

@@ -72,8 +72,11 @@ class WatchConnectivityManager: NSObject, ObservableObject {
             return
         }
 
-        // Convert to watch-compatible data
-        let watchHabits = habits.map { habit in
+        // Check premium status - Watch app is a premium feature
+        let isPremium = StoreManager.shared.isPremium
+
+        // Convert to watch-compatible data (only if premium, otherwise send empty)
+        let watchHabits: [WatchHabitData] = isPremium ? habits.map { habit in
             WatchHabitData(
                 id: habit.id,
                 name: habit.name,
@@ -82,7 +85,7 @@ class WatchConnectivityManager: NSObject, ObservableObject {
                 isCompletedToday: habit.isCompletedToday,
                 currentStreak: habit.currentStreak
             )
-        }
+        } : []
 
         // Encode to JSON
         guard let data = try? JSONEncoder().encode(watchHabits) else {
@@ -95,12 +98,14 @@ class WatchConnectivityManager: NSObject, ObservableObject {
         // Also save to App Group for complications
         if let defaults = UserDefaults(suiteName: suiteName) {
             defaults.set(data, forKey: habitsKey)
+            defaults.set(isPremium, forKey: "isPremium")
         }
 
         // Send to Watch using transferUserInfo (queued, reliable)
         let userInfo: [String: Any] = [
             "type": "habitsUpdate",
             "data": data,
+            "isPremium": isPremium,
             "timestamp": Date().timeIntervalSince1970
         ]
 

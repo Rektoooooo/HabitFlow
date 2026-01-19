@@ -17,10 +17,12 @@ class WatchDataManager: ObservableObject {
 
     @Published var habits: [WatchHabitData] = []
     @Published var lastSyncDate: Date?
+    @Published var isPremium: Bool = false
 
     private let suiteName = "group.ic-servis.com.HabitTracker"
     private let habitsKey = "watchHabits"
     private let lastSyncKey = "watchLastSync"
+    private let premiumKey = "isPremium"
 
     init() {
         loadHabits()
@@ -29,18 +31,35 @@ class WatchDataManager: ObservableObject {
     // MARK: - Load Habits from App Group
 
     func loadHabits() {
-        guard let defaults = UserDefaults(suiteName: suiteName),
-              let data = defaults.data(forKey: habitsKey),
-              let decoded = try? JSONDecoder().decode([WatchHabitData].self, from: data) else {
+        guard let defaults = UserDefaults(suiteName: suiteName) else {
             #if DEBUG
-            print("No habits found in App Group")
+            print("Could not access App Group")
+            #endif
+            return
+        }
+
+        // Load premium status
+        isPremium = defaults.bool(forKey: premiumKey)
+
+        // If not premium, don't load habits (Watch is premium feature)
+        guard isPremium else {
+            habits = []
+            #if DEBUG
+            print("Not premium, Watch app locked")
             #endif
 
             #if targetEnvironment(simulator)
-            // Load sample data for simulator testing
-            if habits.isEmpty {
-                loadSampleDataForSimulator()
-            }
+            // For simulator testing, allow sample data
+            isPremium = true
+            loadSampleDataForSimulator()
+            #endif
+            return
+        }
+
+        guard let data = defaults.data(forKey: habitsKey),
+              let decoded = try? JSONDecoder().decode([WatchHabitData].self, from: data) else {
+            #if DEBUG
+            print("No habits found in App Group")
             #endif
             return
         }
@@ -66,9 +85,42 @@ class WatchDataManager: ObservableObject {
     }
     #endif
 
+    // MARK: - Update Premium Status
+
+    func updatePremiumStatus(_ premium: Bool) {
+        isPremium = premium
+
+        if let defaults = UserDefaults(suiteName: suiteName) {
+            defaults.set(premium, forKey: premiumKey)
+        }
+
+        // If no longer premium, clear habits
+        if !premium {
+            habits = []
+        }
+
+        #if DEBUG
+        print("Premium status updated: \(premium)")
+        #endif
+    }
+
     // MARK: - Save Habits to App Group
 
-    func saveHabits(_ newHabits: [WatchHabitData]) {
+    func saveHabits(_ newHabits: [WatchHabitData], isPremium premium: Bool? = nil) {
+        // Update premium status if provided
+        if let premium = premium {
+            updatePremiumStatus(premium)
+        }
+
+        // Only save habits if premium
+        guard isPremium else {
+            habits = []
+            #if DEBUG
+            print("Not premium, not saving habits")
+            #endif
+            return
+        }
+
         habits = newHabits
 
         guard let defaults = UserDefaults(suiteName: suiteName),
