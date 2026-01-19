@@ -563,7 +563,7 @@ struct SettingsView: View {
                     secondaryText: secondaryText,
                     tertiaryText: tertiaryText
                 ) {
-                    openURL("https://habitflow.app/privacy")
+                    openURL("https://sebkucera.dev/dottihabits/privacy-policy")
                 }
 
                 Divider()
@@ -580,7 +580,7 @@ struct SettingsView: View {
                     secondaryText: secondaryText,
                     tertiaryText: tertiaryText
                 ) {
-                    openURL("https://habitflow.app/terms")
+                    openURL("https://sebkucera.dev/dottihabits/tos")
                 }
             }
             .liquidGlass(cornerRadius: 20)
