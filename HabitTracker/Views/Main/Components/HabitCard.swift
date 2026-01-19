@@ -154,7 +154,6 @@ struct HabitCard: View {
                 if habit.habitType != .manual, habit.dailyGoal != nil {
                     // Progress ring for HealthKit habits with goals
                     progressRing
-                        .frame(width: 54, height: 54)
                 } else {
                     // Standard checkmark for manual habits
                     CheckmarkTapView(
@@ -191,32 +190,39 @@ struct HabitCard: View {
 
     private var progressRing: some View {
         ZStack {
-            Circle()
-                .stroke(colorScheme == .dark ? Color.white.opacity(0.15) : Color.gray.opacity(0.2), lineWidth: 4)
-                .frame(width: 48, height: 48)
-
-            Circle()
-                .trim(from: 0, to: min(habit.todayProgress, 1.0))
-                .stroke(
-                    Color(hex: habit.color),
-                    style: StrokeStyle(lineWidth: 4, lineCap: .round)
-                )
-                .frame(width: 48, height: 48)
-                .rotationEffect(.degrees(-90))
-                .animation(.spring(response: 0.5, dampingFraction: 0.7), value: habit.todayProgress)
-
             if habit.isCompletedToday {
+                // Show filled checkmark (same as manual habits) when completed
+                Circle()
+                    .fill(Color(hex: habit.color))
+                    .frame(width: 44, height: 44)
+
                 Image(systemName: "checkmark")
-                    .font(.caption.weight(.bold))
-                    .foregroundStyle(Color(hex: habit.color))
+                    .font(.headline.weight(.bold))
+                    .foregroundStyle(.white)
                     .transition(.scale.combined(with: .opacity))
             } else {
+                // Show progress ring when not completed
+                Circle()
+                    .stroke(colorScheme == .dark ? Color.white.opacity(0.15) : Color.gray.opacity(0.2), lineWidth: 4)
+                    .frame(width: 48, height: 48)
+
+                Circle()
+                    .trim(from: 0, to: min(habit.todayProgress, 1.0))
+                    .stroke(
+                        Color(hex: habit.color),
+                        style: StrokeStyle(lineWidth: 4, lineCap: .round)
+                    )
+                    .frame(width: 48, height: 48)
+                    .rotationEffect(.degrees(-90))
+                    .animation(.spring(response: 0.5, dampingFraction: 0.7), value: habit.todayProgress)
+
                 Text("\(Int(habit.todayProgress * 100))%")
                     .font(.system(size: 10, weight: .bold))
                     .foregroundStyle(secondaryTextColor)
                     .contentTransition(.numericText())
             }
         }
+        .frame(width: 54, height: 54)
         .animation(.spring(response: 0.3, dampingFraction: 0.7), value: habit.isCompletedToday)
         .accessibilityElement(children: .combine)
         .accessibilityLabel("\(habit.name) progress, \(Int(habit.todayProgress * 100)) percent")
