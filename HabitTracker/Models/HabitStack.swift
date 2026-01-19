@@ -98,6 +98,14 @@ struct StackProgress {
     }
 }
 
+// MARK: - Template Habit (for pre-built chains)
+
+struct TemplateHabit {
+    let name: String
+    let icon: String
+    let color: String
+}
+
 // MARK: - Stack Templates
 
 struct StackTemplate: Identifiable {
@@ -106,43 +114,100 @@ struct StackTemplate: Identifiable {
     let description: String
     let icon: String
     let color: String
-    let suggestedHabits: [String] // Habit names to suggest
+    let habits: [TemplateHabit] // Pre-defined habits to create
+
+    // Legacy property for backwards compatibility
+    var suggestedHabits: [String] {
+        habits.map { $0.name }
+    }
 
     static let templates: [StackTemplate] = [
         StackTemplate(
             name: "Morning Routine",
-            description: "Start your day right",
+            description: "Start your day right with energy",
             icon: "sunrise.fill",
             color: "#F59E0B",
-            suggestedHabits: ["Wake up early", "Drink water", "Meditate", "Exercise", "Healthy breakfast"]
+            habits: [
+                TemplateHabit(name: "Wake Up Early", icon: "alarm.fill", color: "#F59E0B"),
+                TemplateHabit(name: "Drink Water", icon: "drop.fill", color: "#06B6D4"),
+                TemplateHabit(name: "Morning Meditation", icon: "brain.head.profile", color: "#8B5CF6"),
+                TemplateHabit(name: "Exercise", icon: "figure.run", color: "#10B981"),
+                TemplateHabit(name: "Healthy Breakfast", icon: "fork.knife", color: "#F97316")
+            ]
         ),
         StackTemplate(
             name: "Evening Wind-Down",
             description: "Prepare for restful sleep",
             icon: "moon.stars.fill",
             color: "#8B5CF6",
-            suggestedHabits: ["No screens", "Read", "Journal", "Stretch", "Sleep on time"]
+            habits: [
+                TemplateHabit(name: "No Screens", icon: "iphone.slash", color: "#EF4444"),
+                TemplateHabit(name: "Read a Book", icon: "book.fill", color: "#3B82F6"),
+                TemplateHabit(name: "Journal", icon: "pencil.and.scribble", color: "#EC4899"),
+                TemplateHabit(name: "Evening Stretch", icon: "figure.flexibility", color: "#10B981"),
+                TemplateHabit(name: "Sleep on Time", icon: "bed.double.fill", color: "#8B5CF6")
+            ]
         ),
         StackTemplate(
             name: "Productivity Block",
-            description: "Deep work session",
+            description: "Deep work session for focus",
             icon: "bolt.fill",
             color: "#3B82F6",
-            suggestedHabits: ["Plan tasks", "Focus session", "Take breaks", "Review progress"]
+            habits: [
+                TemplateHabit(name: "Plan Tasks", icon: "checklist", color: "#F59E0B"),
+                TemplateHabit(name: "Focus Session", icon: "timer", color: "#3B82F6"),
+                TemplateHabit(name: "Take a Break", icon: "cup.and.saucer.fill", color: "#10B981"),
+                TemplateHabit(name: "Review Progress", icon: "chart.bar.fill", color: "#8B5CF6")
+            ]
         ),
         StackTemplate(
             name: "Fitness Chain",
             description: "Complete workout routine",
             icon: "figure.run",
             color: "#10B981",
-            suggestedHabits: ["Warm up", "Cardio", "Strength training", "Cool down", "Stretch"]
+            habits: [
+                TemplateHabit(name: "Warm Up", icon: "figure.walk", color: "#F59E0B"),
+                TemplateHabit(name: "Cardio", icon: "heart.fill", color: "#EF4444"),
+                TemplateHabit(name: "Strength Training", icon: "dumbbell.fill", color: "#3B82F6"),
+                TemplateHabit(name: "Cool Down", icon: "wind", color: "#06B6D4"),
+                TemplateHabit(name: "Stretch", icon: "figure.flexibility", color: "#10B981")
+            ]
         ),
         StackTemplate(
             name: "Mindfulness Practice",
             description: "Mental wellness routine",
             icon: "brain.head.profile",
             color: "#EC4899",
-            suggestedHabits: ["Breathwork", "Meditation", "Gratitude", "Journaling"]
+            habits: [
+                TemplateHabit(name: "Breathwork", icon: "wind", color: "#06B6D4"),
+                TemplateHabit(name: "Meditation", icon: "brain.head.profile", color: "#8B5CF6"),
+                TemplateHabit(name: "Gratitude", icon: "heart.fill", color: "#EC4899"),
+                TemplateHabit(name: "Journaling", icon: "pencil.and.scribble", color: "#F59E0B")
+            ]
+        ),
+        StackTemplate(
+            name: "Self-Care Sunday",
+            description: "Weekly self-care ritual",
+            icon: "sparkles",
+            color: "#EC4899",
+            habits: [
+                TemplateHabit(name: "Sleep In", icon: "bed.double.fill", color: "#8B5CF6"),
+                TemplateHabit(name: "Skincare Routine", icon: "face.smiling.fill", color: "#EC4899"),
+                TemplateHabit(name: "Healthy Meal Prep", icon: "carrot.fill", color: "#10B981"),
+                TemplateHabit(name: "Relaxing Activity", icon: "leaf.fill", color: "#06B6D4")
+            ]
+        ),
+        StackTemplate(
+            name: "Study Session",
+            description: "Effective learning routine",
+            icon: "book.closed.fill",
+            color: "#3B82F6",
+            habits: [
+                TemplateHabit(name: "Review Notes", icon: "doc.text.fill", color: "#F59E0B"),
+                TemplateHabit(name: "Active Learning", icon: "brain.fill", color: "#8B5CF6"),
+                TemplateHabit(name: "Practice Problems", icon: "pencil.and.ruler.fill", color: "#3B82F6"),
+                TemplateHabit(name: "Quick Quiz", icon: "questionmark.circle.fill", color: "#10B981")
+            ]
         )
     ]
 }

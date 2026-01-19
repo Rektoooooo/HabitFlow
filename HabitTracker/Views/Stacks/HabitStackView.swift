@@ -127,25 +127,38 @@ struct StacksView: View {
 
     private var templatesSection: some View {
         VStack(alignment: .leading, spacing: 16) {
-            Text("Chain Templates")
-                .font(.headline)
-                .foregroundStyle(primaryText)
+            HStack {
+                Text("Pre-built Chains")
+                    .font(.headline)
+                    .foregroundStyle(primaryText)
 
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: 12) {
-                    ForEach(StackTemplate.templates) { template in
-                        StackTemplateCard(template: template) {
-                            // Create stack from template
+                Spacer()
+
+                Text("Tap Add to create")
+                    .font(.caption)
+                    .foregroundStyle(secondaryText)
+            }
+
+            LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
+                ForEach(StackTemplate.templates) { template in
+                    StackTemplateCard(
+                        template: template,
+                        onAdd: {
                             createFromTemplate(template)
+                        },
+                        onCustomize: {
+                            selectedTemplate = template
                         }
-                    }
+                    )
                 }
             }
         }
     }
 
     private func createFromTemplate(_ template: StackTemplate) {
-        selectedTemplate = template
+        // Create stack with all habits in one tap
+        _ = HabitStackManager.shared.createFromTemplate(template, in: modelContext)
+        HapticManager.shared.success()
     }
 }
 
@@ -359,55 +372,109 @@ struct StackCard: View {
 
 struct StackTemplateCard: View {
     let template: StackTemplate
-    let action: () -> Void
+    let onAdd: () -> Void
+    let onCustomize: () -> Void
 
     @Environment(\.colorScheme) private var colorScheme
+    @State private var showingHabits = false
+
+    private var primaryText: Color {
+        colorScheme == .dark ? .white : Color(red: 0.2, green: 0.15, blue: 0.3)
+    }
+
+    private var secondaryText: Color {
+        colorScheme == .dark ? .white.opacity(0.7) : Color(red: 0.4, green: 0.35, blue: 0.5)
+    }
 
     var body: some View {
-        Button(action: action) {
-            VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: 10) {
+            // Header
+            HStack(spacing: 10) {
                 ZStack {
                     Circle()
                         .fill(Color(hex: template.color).opacity(0.2))
-                        .frame(width: 40, height: 40)
+                        .frame(width: 36, height: 36)
 
                     Image(systemName: template.icon)
-                        .font(.title3)
+                        .font(.subheadline)
                         .foregroundStyle(Color(hex: template.color))
                 }
 
-                VStack(alignment: .leading, spacing: 4) {
+                VStack(alignment: .leading, spacing: 2) {
                     Text(template.name)
                         .font(.subheadline.weight(.semibold))
-                        .foregroundStyle(colorScheme == .dark ? .white : Color(red: 0.2, green: 0.15, blue: 0.3))
+                        .foregroundStyle(primaryText)
                         .lineLimit(1)
 
-                    Text(template.description)
-                        .font(.caption)
-                        .foregroundStyle(colorScheme == .dark ? .white.opacity(0.7) : Color(red: 0.4, green: 0.35, blue: 0.5))
-                        .lineLimit(2)
-                        .fixedSize(horizontal: false, vertical: true)
+                    Text("\(template.habits.count) habits")
+                        .font(.caption2)
+                        .foregroundStyle(Color(hex: template.color))
                 }
-                .frame(height: 50, alignment: .top)
 
-                Spacer(minLength: 0)
-
-                Text("\(template.suggestedHabits.count) habits")
-                    .font(.caption2)
-                    .foregroundStyle(Color(hex: template.color))
+                Spacer()
             }
-            .frame(width: 140, height: 150, alignment: .leading)
-            .padding(14)
-            .background(
-                RoundedRectangle(cornerRadius: 16)
-                    .fill(colorScheme == .dark ? Color.white.opacity(0.08) : Color.white.opacity(0.7))
-            )
-            .overlay(
-                RoundedRectangle(cornerRadius: 16)
-                    .stroke(Color(hex: template.color).opacity(0.3), lineWidth: 1)
-            )
+
+            // Description
+            Text(template.description)
+                .font(.caption)
+                .foregroundStyle(secondaryText)
+                .lineLimit(2)
+                .fixedSize(horizontal: false, vertical: true)
+
+            // Habit preview (icons)
+            HStack(spacing: -6) {
+                ForEach(template.habits.prefix(4), id: \.name) { habit in
+                    ZStack {
+                        Circle()
+                            .fill(Color(hex: habit.color))
+                            .frame(width: 24, height: 24)
+
+                        Image(systemName: habit.icon)
+                            .font(.system(size: 10))
+                            .foregroundStyle(.white)
+                    }
+                }
+
+                if template.habits.count > 4 {
+                    ZStack {
+                        Circle()
+                            .fill(colorScheme == .dark ? Color.white.opacity(0.2) : Color.black.opacity(0.1))
+                            .frame(width: 24, height: 24)
+
+                        Text("+\(template.habits.count - 4)")
+                            .font(.system(size: 9, weight: .bold))
+                            .foregroundStyle(secondaryText)
+                    }
+                }
+
+                Spacer()
+            }
+
+            // Add button
+            Button(action: onAdd) {
+                HStack {
+                    Image(systemName: "plus.circle.fill")
+                        .font(.caption)
+                    Text("Add Chain")
+                        .font(.caption.weight(.semibold))
+                }
+                .foregroundStyle(.white)
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 8)
+                .background(Color(hex: template.color))
+                .clipShape(RoundedRectangle(cornerRadius: 8))
+            }
+            .buttonStyle(.plain)
         }
-        .buttonStyle(.plain)
+        .padding(12)
+        .background(
+            RoundedRectangle(cornerRadius: 16)
+                .fill(colorScheme == .dark ? Color.white.opacity(0.08) : Color.white.opacity(0.7))
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 16)
+                .stroke(Color(hex: template.color).opacity(0.3), lineWidth: 1)
+        )
     }
 }
 

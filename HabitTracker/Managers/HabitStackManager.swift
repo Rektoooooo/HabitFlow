@@ -18,6 +18,40 @@ class HabitStackManager: ObservableObject {
 
     private init() {}
 
+    // MARK: - Template Operations
+
+    /// Create a stack from a template (creates habits + stack in one tap)
+    func createFromTemplate(
+        _ template: StackTemplate,
+        in context: ModelContext
+    ) -> HabitStack {
+        // Create all habits from the template
+        var createdHabits: [Habit] = []
+
+        for templateHabit in template.habits {
+            let habit = Habit(
+                name: templateHabit.name,
+                icon: templateHabit.icon,
+                color: templateHabit.color,
+                habitType: .manual,
+                dataSource: .manual
+            )
+            context.insert(habit)
+            createdHabits.append(habit)
+        }
+
+        // Create the stack with the habits
+        let stack = createStack(
+            name: template.name,
+            icon: template.icon,
+            color: template.color,
+            habits: createdHabits,
+            in: context
+        )
+
+        return stack
+    }
+
     // MARK: - Stack Operations
 
     /// Create a new stack
