@@ -140,6 +140,26 @@ class Habit {
         self.unit = unit
     }
 
+    // MARK: - Goal Completion Helper
+
+    /// Check if a value meets the goal for this habit type
+    /// For calories, uses a tolerance range (goal - 300 to goal + 200)
+    /// For other habits, checks if value >= goal
+    func isGoalMet(value: Double, goal: Double) -> Bool {
+        switch habitType {
+        case .healthKitCalories:
+            // For calories, allow a tolerance range
+            // Lower bound: 300 under goal (eating less is okay)
+            // Upper bound: 200 over goal (slight overeating acceptable)
+            let lowerBound = max(0, goal - 300)
+            let upperBound = goal + 200
+            return value >= lowerBound && value <= upperBound
+        default:
+            // For all other habits, value must meet or exceed goal
+            return value >= goal
+        }
+    }
+
     // MARK: - Computed Properties
 
     /// Safe accessor for completions (returns empty array if nil)
@@ -168,9 +188,9 @@ class Habit {
             return false
         }
 
-        // For habits with goals, check if goal is met
+        // For habits with goals, check if goal is met (with tolerance for calories)
         if let goal = dailyGoal, let value = todayCompletion.value {
-            return value >= goal
+            return isGoalMet(value: value, goal: goal)
         }
 
         // For manual habits without goals, just check existence
@@ -184,9 +204,9 @@ class Habit {
         let completedDates = Set(safeCompletions.compactMap { completion -> Date? in
             let date = calendar.startOfDay(for: completion.date)
 
-            // For habits with goals, check if goal was met
+            // For habits with goals, check if goal was met (with tolerance for calories)
             if let goal = dailyGoal, goal > 0 {
-                guard let value = completion.value, value >= goal else {
+                guard let value = completion.value, isGoalMet(value: value, goal: goal) else {
                     return nil  // Goal not met, don't count this day
                 }
             }
@@ -228,9 +248,9 @@ class Habit {
         let completedDates = Set(safeCompletions.compactMap { completion -> Date? in
             let date = calendar.startOfDay(for: completion.date)
 
-            // For habits with goals, check if goal was met
+            // For habits with goals, check if goal was met (with tolerance for calories)
             if let goal = dailyGoal, goal > 0 {
-                guard let value = completion.value, value >= goal else {
+                guard let value = completion.value, isGoalMet(value: value, goal: goal) else {
                     return nil  // Goal not met, don't count this day
                 }
             }
@@ -263,7 +283,19 @@ class Habit {
         let daysSinceCreation = calendar.dateComponents([.day], from: createdAt, to: Date()).day ?? 0
         guard daysSinceCreation > 0 else { return isCompletedToday ? 1.0 : 0.0 }
 
-        let uniqueDays = Set(safeCompletions.map { calendar.startOfDay(for: $0.date) }).count
-        return Double(uniqueDays) / Double(daysSinceCreation + 1)
+        // Count unique days where goal was actually met (with tolerance for calories)
+        let completedDays = Set(safeCompletions.compactMap { completion -> Date? in
+            let date = calendar.startOfDay(for: completion.date)
+
+            // For habits with goals, check if goal was met
+            if let goal = dailyGoal, goal > 0 {
+                guard let value = completion.value, isGoalMet(value: value, goal: goal) else {
+                    return nil
+                }
+            }
+            return date
+        }).count
+
+        return Double(completedDays) / Double(daysSinceCreation + 1)
     }
 }
