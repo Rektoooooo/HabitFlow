@@ -216,7 +216,7 @@ class DynamicGoalManager: ObservableObject {
 
     private func getRecentCompletions(for habit: Habit, days: Int) -> [HabitCompletion] {
         let startDate = calendar.date(byAdding: .day, value: -days, to: Date()) ?? Date()
-        return habit.completions.filter { $0.date >= startDate }
+        return habit.safeCompletions.filter { $0.date >= startDate }
     }
 
     private func calculateCompletionRate(completions: [HabitCompletion], habit: Habit) -> Double {

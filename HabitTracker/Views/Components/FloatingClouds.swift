@@ -17,100 +17,58 @@ struct CloudsTheme {
     var bottomLeading: Color
     var bottomTrailing: Color
 
-    // MARK: - HabitTracker Theme
+    // MARK: - Dynamic HabitTracker Theme (uses ThemeManager accent color)
 
     static func habitTracker(_ scheme: ColorScheme) -> CloudsTheme {
+        let accentColor = ThemeManager.shared.accentColor
+        return dynamicTheme(for: accentColor, scheme: scheme)
+    }
+
+    // MARK: - Dynamic Theme Based on Accent Color
+
+    static func dynamicTheme(for accent: AccentColor, scheme: ColorScheme) -> CloudsTheme {
+        // Get the RGB components of the accent color
+        let (r, g, b) = accent.rgbComponents
+
         if scheme == .dark {
-            // Dark mode: Deep purple with magenta/cyan accents (matching light mode aesthetic)
+            // Dark mode: Deep background with accent-tinted clouds
+            // Background uses a very dark version of the accent
+            let bgR = r * 0.12
+            let bgG = g * 0.08
+            let bgB = b * 0.15
+
             return CloudsTheme(
-                // Deep midnight purple base
-                background: Color(red: 0.08, green: 0.06, blue: 0.16),
-                // Top left - rich purple/violet
-                topLeading: Color(red: 0.50, green: 0.28, blue: 0.72, opacity: 0.70),
-                // Top right - soft cyan/blue (mirrors light mode blue)
-                topTrailing: Color(red: 0.35, green: 0.55, blue: 0.80, opacity: 0.55),
-                // Bottom left - deep lavender/purple
-                bottomLeading: Color(red: 0.45, green: 0.35, blue: 0.70, opacity: 0.50),
-                // Bottom right - magenta/pink (mirrors light mode pink)
-                bottomTrailing: Color(red: 0.65, green: 0.30, blue: 0.65, opacity: 0.60)
+                // Deep dark background tinted with accent
+                background: Color(red: max(0.05, bgR), green: max(0.03, bgG), blue: max(0.10, bgB)),
+                // Top left - vibrant accent color
+                topLeading: Color(red: r * 0.85, green: g * 0.65, blue: b * 0.95).opacity(0.75),
+                // Top right - shifted accent
+                topTrailing: Color(red: r * 0.6, green: g * 0.75, blue: b * 0.85).opacity(0.60),
+                // Bottom left - deeper accent
+                bottomLeading: Color(red: r * 0.7, green: g * 0.5, blue: b * 0.85).opacity(0.55),
+                // Bottom right - rich accent
+                bottomTrailing: Color(red: r * 0.9, green: g * 0.5, blue: b * 0.7).opacity(0.65)
             )
         } else {
-            // Light mode: Soft lavender/pink/blue
+            // Light mode: Soft background with MORE VISIBLE accent-tinted clouds
+            // Background is a light tint of the accent
+            let bgR = 0.94 + r * 0.04
+            let bgG = 0.92 + g * 0.04
+            let bgB = 0.96 + b * 0.03
+
             return CloudsTheme(
-                // Light lavender base
-                background: Color(red: 0.94, green: 0.92, blue: 0.98),
-                // Top left - soft pink
-                topLeading: Color(red: 0.85, green: 0.70, blue: 0.90, opacity: 0.70),
-                // Top right - light blue
-                topTrailing: Color(red: 0.70, green: 0.82, blue: 0.95, opacity: 0.60),
-                // Bottom left - soft lavender
-                bottomLeading: Color(red: 0.78, green: 0.72, blue: 0.92, opacity: 0.50),
-                // Bottom right - light purple/pink
-                bottomTrailing: Color(red: 0.88, green: 0.75, blue: 0.92, opacity: 0.55)
+                // Light pastel background with accent tint
+                background: Color(red: min(0.98, bgR), green: min(0.97, bgG), blue: min(0.99, bgB)),
+                // Top left - MORE SATURATED accent cloud
+                topLeading: Color(red: r * 0.85, green: g * 0.7, blue: b * 0.9).opacity(0.55),
+                // Top right - complementary accent
+                topTrailing: Color(red: r * 0.7, green: g * 0.8, blue: b * 0.85).opacity(0.45),
+                // Bottom left - accent tinted
+                bottomLeading: Color(red: r * 0.75, green: g * 0.65, blue: b * 0.85).opacity(0.40),
+                // Bottom right - soft accent
+                bottomTrailing: Color(red: r * 0.9, green: g * 0.7, blue: b * 0.8).opacity(0.50)
             )
         }
-    }
-
-    // MARK: - Alternative Themes
-
-    static func purple(_ scheme: ColorScheme) -> CloudsTheme {
-        CloudsTheme(
-            background: scheme == .dark
-                ? Color(red: 0.25, green: 0.00, blue: 0.35)
-                : Color(red: 0.96, green: 0.94, blue: 0.99),
-            topLeading: scheme == .dark
-                ? Color(red: 0.40, green: 0.15, blue: 0.55, opacity: 0.8)
-                : Color(red: 0.75, green: 0.55, blue: 0.95, opacity: 0.70),
-            topTrailing: scheme == .dark
-                ? Color(red: 0.55, green: 0.25, blue: 0.70, opacity: 0.6)
-                : Color(red: 0.85, green: 0.65, blue: 1.00, opacity: 0.55),
-            bottomLeading: scheme == .dark
-                ? Color(red: 0.50, green: 0.20, blue: 0.65, opacity: 0.45)
-                : Color(red: 0.70, green: 0.50, blue: 0.90, opacity: 0.50),
-            bottomTrailing: scheme == .dark
-                ? Color(red: 0.75, green: 0.50, blue: 0.90, opacity: 0.7)
-                : Color(red: 0.80, green: 0.60, blue: 0.95, opacity: 0.60)
-        )
-    }
-
-    static func blue(_ scheme: ColorScheme) -> CloudsTheme {
-        CloudsTheme(
-            background: scheme == .dark
-                ? Color(red: 0.00, green: 0.15, blue: 0.40)
-                : Color(red: 0.94, green: 0.97, blue: 1.00),
-            topLeading: scheme == .dark
-                ? Color(red: 0.00, green: 0.30, blue: 0.60, opacity: 0.8)
-                : Color(red: 0.55, green: 0.75, blue: 1.00, opacity: 0.65),
-            topTrailing: scheme == .dark
-                ? Color(red: 0.10, green: 0.40, blue: 0.75, opacity: 0.6)
-                : Color(red: 0.65, green: 0.82, blue: 1.00, opacity: 0.55),
-            bottomLeading: scheme == .dark
-                ? Color(red: 0.05, green: 0.35, blue: 0.70, opacity: 0.45)
-                : Color(red: 0.50, green: 0.70, blue: 0.95, opacity: 0.50),
-            bottomTrailing: scheme == .dark
-                ? Color(red: 0.40, green: 0.65, blue: 1.00, opacity: 0.7)
-                : Color(red: 0.60, green: 0.78, blue: 1.00, opacity: 0.58)
-        )
-    }
-
-    static func pink(_ scheme: ColorScheme) -> CloudsTheme {
-        CloudsTheme(
-            background: scheme == .dark
-                ? Color(red: 0.40, green: 0.00, blue: 0.30)
-                : Color(red: 1.00, green: 0.95, blue: 0.97),
-            topLeading: scheme == .dark
-                ? Color(red: 0.60, green: 0.05, blue: 0.45, opacity: 0.8)
-                : Color(red: 1.00, green: 0.65, blue: 0.80, opacity: 0.65),
-            topTrailing: scheme == .dark
-                ? Color(red: 0.75, green: 0.10, blue: 0.55, opacity: 0.6)
-                : Color(red: 1.00, green: 0.75, blue: 0.88, opacity: 0.55),
-            bottomLeading: scheme == .dark
-                ? Color(red: 0.70, green: 0.08, blue: 0.50, opacity: 0.45)
-                : Color(red: 0.95, green: 0.60, blue: 0.75, opacity: 0.50),
-            bottomTrailing: scheme == .dark
-                ? Color(red: 1.00, green: 0.40, blue: 0.80, opacity: 0.7)
-                : Color(red: 1.00, green: 0.70, blue: 0.85, opacity: 0.58)
-        )
     }
 }
 
@@ -160,17 +118,24 @@ struct Cloud: View {
 
 struct FloatingClouds: View {
     @Environment(\.colorScheme) var scheme
+    @ObservedObject private var themeManager = ThemeManager.shared
 
-    var theme: CloudsTheme?
+    var customTheme: CloudsTheme?
     let blur: CGFloat
 
     init(theme: CloudsTheme? = nil, blur: CGFloat = 60) {
-        self.theme = theme
+        self.customTheme = theme
         self.blur = blur
     }
 
+    private var currentTheme: CloudsTheme {
+        // If a custom theme is provided, use it
+        // Otherwise, generate dynamic theme based on accent color
+        customTheme ?? CloudsTheme.dynamicTheme(for: themeManager.accentColor, scheme: scheme)
+    }
+
     var body: some View {
-        let t = theme ?? CloudsTheme.habitTracker(scheme)
+        let t = currentTheme
 
         GeometryReader { proxy in
             ZStack {

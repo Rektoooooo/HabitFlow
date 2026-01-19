@@ -8,45 +8,18 @@
 import SwiftUI
 import StoreKit
 
-// Appearance mode options
-enum AppearanceMode: String, CaseIterable {
-    case system = "System"
-    case light = "Light"
-    case dark = "Dark"
-
-    var colorScheme: ColorScheme? {
-        switch self {
-        case .system: return nil
-        case .light: return .light
-        case .dark: return .dark
-        }
-    }
-
-    var icon: String {
-        switch self {
-        case .system: return "iphone"
-        case .light: return "sun.max.fill"
-        case .dark: return "moon.fill"
-        }
-    }
-}
-
 struct SettingsView: View {
     @Environment(\.colorScheme) private var colorScheme
     @Environment(\.requestReview) private var requestReview
     @AppStorage("hasCompletedOnboarding") private var hasCompletedOnboarding = true
-    @AppStorage("appearanceMode") private var appearanceMode: String = AppearanceMode.system.rawValue
     @ObservedObject private var store = StoreManager.shared
     @ObservedObject private var notificationManager = NotificationManager.shared
     @ObservedObject private var healthKitManager = HealthKitManager.shared
+    @ObservedObject private var themeManager = ThemeManager.shared
 
     @State private var showingPaywall = false
     @State private var iCloudAvailable = false
     @State private var isCheckingICloud = true
-
-    private var selectedAppearance: AppearanceMode {
-        AppearanceMode(rawValue: appearanceMode) ?? .system
-    }
 
     // Adaptive text colors
     private var primaryText: Color {
@@ -62,7 +35,7 @@ struct SettingsView: View {
     }
 
     private var accentColor: Color {
-        Color(red: 0.65, green: 0.35, blue: 0.85)
+        themeManager.primaryColor
     }
 
     private var dividerColor: Color {
@@ -73,7 +46,7 @@ struct SettingsView: View {
         NavigationStack {
             ZStack {
                 // Floating clouds background
-                FloatingClouds(theme: .habitTracker(colorScheme))
+                FloatingClouds()
 
                 ScrollView {
                     VStack(spacing: 24) {
@@ -116,7 +89,7 @@ struct SettingsView: View {
                 await checkiCloudStatus()
             }
         }
-        .preferredColorScheme(selectedAppearance.colorScheme)
+        .preferredColorScheme(themeManager.appearanceMode.colorScheme)
     }
 
     // MARK: - iCloud Status Check
@@ -226,54 +199,70 @@ struct SettingsView: View {
                 .foregroundStyle(secondaryText)
                 .padding(.leading, 4)
 
-            HStack(spacing: 12) {
-                ForEach(AppearanceMode.allCases, id: \.rawValue) { mode in
-                    Button {
-                        HapticManager.shared.selectionChanged()
-                        withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
-                            appearanceMode = mode.rawValue
-                        }
-                    } label: {
-                        VStack(spacing: 8) {
-                            ZStack {
-                                RoundedRectangle(cornerRadius: 12)
-                                    .fill(selectedAppearance == mode
-                                          ? accentColor.opacity(0.2)
-                                          : (colorScheme == .dark ? Color.white.opacity(0.1) : Color(red: 0.9, green: 0.88, blue: 0.95)))
-                                    .frame(width: 50, height: 50)
+            VStack(spacing: 0) {
+                // Appearance Customization (Premium)
+                NavigationLink {
+                    AppearanceView()
+                } label: {
+                    HStack(spacing: 16) {
+                        ZStack {
+                            RoundedRectangle(cornerRadius: 10)
+                                .fill(themeManager.primaryGradient)
+                                .frame(width: 40, height: 40)
 
-                                Image(systemName: mode.icon)
-                                    .font(.title2)
-                                    .foregroundStyle(selectedAppearance == mode
-                                                     ? accentColor
-                                                     : secondaryText)
+                            Image(systemName: "paintpalette.fill")
+                                .font(.body)
+                                .foregroundStyle(.white)
+                        }
+
+                        VStack(alignment: .leading, spacing: 2) {
+                            HStack(spacing: 8) {
+                                Text("Theme & Colors")
+                                    .font(.body)
+                                    .foregroundStyle(primaryText)
+
+                                if !store.isPremium {
+                                    Text("PRO")
+                                        .font(.caption2.weight(.bold))
+                                        .foregroundStyle(.white)
+                                        .padding(.horizontal, 6)
+                                        .padding(.vertical, 2)
+                                        .background(
+                                            Capsule()
+                                                .fill(themeManager.primaryGradient)
+                                        )
+                                }
                             }
 
-                            Text(mode.rawValue)
+                            Text("\(themeManager.appearanceMode.displayName) mode, \(themeManager.accentColor.displayName)")
                                 .font(.caption)
-                                .foregroundStyle(selectedAppearance == mode
-                                                 ? primaryText
-                                                 : secondaryText)
+                                .foregroundStyle(secondaryText)
                         }
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 12)
-                        .background(
-                            RoundedRectangle(cornerRadius: 16)
-                                .fill(selectedAppearance == mode
-                                      ? accentColor.opacity(0.1)
-                                      : Color.clear)
-                        )
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 16)
-                                .stroke(selectedAppearance == mode
-                                        ? accentColor.opacity(0.5)
-                                        : Color.clear, lineWidth: 2)
-                        )
+
+                        Spacer()
+
+                        // Color preview circles
+                        HStack(spacing: -6) {
+                            ForEach([AccentColor.purple, .pink, .blue, .green], id: \.self) { color in
+                                Circle()
+                                    .fill(color.color)
+                                    .frame(width: 18, height: 18)
+                                    .overlay(
+                                        Circle()
+                                            .stroke(colorScheme == .dark ? Color.black : Color.white, lineWidth: 2)
+                                    )
+                            }
+                        }
+
+                        Image(systemName: "chevron.right")
+                            .font(.subheadline.weight(.semibold))
+                            .foregroundStyle(tertiaryText)
                     }
-                    .buttonStyle(.plain)
+                    .padding(16)
                 }
+                .accessibilityLabel("Theme and Colors, currently \(themeManager.appearanceMode.displayName) mode with \(themeManager.accentColor.displayName) accent")
+                .accessibilityHint("Double tap to customize app appearance")
             }
-            .padding(16)
             .liquidGlass(cornerRadius: 20)
         }
     }
@@ -730,7 +719,7 @@ struct SettingsView: View {
                 .frame(width: 60, height: 60)
                 .opacity(0.8)
 
-            Text("HabitFlow")
+            Text("Dotti")
                 .font(.headline)
                 .foregroundStyle(secondaryText)
 
@@ -754,8 +743,8 @@ struct SettingsView: View {
     // MARK: - Actions
 
     private func shareApp() {
-        let appURL = URL(string: "https://apps.apple.com/app/habitflow/id123456789")! // Replace with actual App Store URL
-        let message = "Check out HabitFlow - the best app to build better habits!"
+        let appURL = URL(string: "https://apps.apple.com/app/dotti/id123456789")! // Replace with actual App Store URL
+        let message = "Check out Dotti - the best app to build better habits!"
 
         let activityVC = UIActivityViewController(
             activityItems: [message, appURL],
@@ -775,8 +764,8 @@ struct SettingsView: View {
     }
 
     private func sendFeedback() {
-        let email = "support@habitflow.app" // Replace with actual support email
-        let subject = "HabitFlow Feedback - v\(appVersion)"
+        let email = "sebastian.kucera@icloud.com"
+        let subject = "Dotti Feedback - v\(appVersion)"
         let body = "\n\n---\nApp Version: \(appVersion)\niOS Version: \(UIDevice.current.systemVersion)\nDevice: \(UIDevice.current.model)"
 
         let urlString = "mailto:\(email)?subject=\(subject.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? "")&body=\(body.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? "")"
@@ -841,6 +830,9 @@ struct SettingsRow: View {
             }
             .padding(16)
         }
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel(subtitle != nil ? "\(title), \(subtitle!)" : title)
+        .accessibilityHint("Double tap to open")
     }
 }
 

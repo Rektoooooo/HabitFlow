@@ -60,12 +60,14 @@ class AuthenticationManager: ObservableObject {
 
         case .failure(let error):
             // User cancelled or other error
+            #if DEBUG
             let authError = error as? ASAuthorizationError
             if authError?.code == .canceled {
                 print("User cancelled Sign in with Apple")
             } else {
                 print("Sign in failed: \(error.localizedDescription)")
             }
+            #endif
         }
     }
 
@@ -122,7 +124,9 @@ class AuthenticationManager: ObservableObject {
                 }
             }
         } catch {
+            #if DEBUG
             print("Failed to check credential state: \(error)")
+            #endif
         }
     }
 
@@ -163,7 +167,8 @@ class AuthenticationManager: ObservableObject {
 
         isSignedIn = true
 
-        // Log for debugging (remove in production)
+        #if DEBUG
+        // Log for debugging
         print("Signed in user: \(user.id)")
         if let email = user.email {
             print("Email: \(email)")
@@ -171,6 +176,7 @@ class AuthenticationManager: ObservableObject {
         if let name = user.displayName as String? {
             print("Name: \(name)")
         }
+        #endif
     }
 
     private func setupCredentialRevocationObserver() {
@@ -229,9 +235,11 @@ class AuthenticationManager: ObservableObject {
         ]
 
         let status = SecItemAdd(addQuery as CFDictionary, nil)
+        #if DEBUG
         if status != errSecSuccess {
             print("Failed to save user ID to Keychain: \(status)")
         }
+        #endif
     }
 
     private func getUserID() -> String? {

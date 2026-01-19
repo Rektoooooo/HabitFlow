@@ -12,6 +12,7 @@ struct EditHabitView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
     @Environment(\.colorScheme) private var colorScheme
+    @ObservedObject private var themeManager = ThemeManager.shared
 
     let habit: Habit
 
@@ -59,7 +60,7 @@ struct EditHabitView: View {
     }
 
     private var accentColor: Color {
-        Color(red: 0.65, green: 0.35, blue: 0.85)
+        themeManager.primaryColor
     }
 
     init(habit: Habit) {
@@ -84,7 +85,7 @@ struct EditHabitView: View {
         NavigationStack {
             ZStack {
                 // Floating clouds background
-                FloatingClouds(theme: .habitTracker(colorScheme))
+                FloatingClouds()
 
                 ScrollView {
                     VStack(spacing: 24) {

@@ -126,6 +126,8 @@ struct HabitCard: View {
                 .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
+            .accessibilityLabel("\(habit.name), \(habit.isCompletedToday ? "completed" : "not completed")")
+            .accessibilityHint("Double tap to view habit details")
 
             // Right side: Focus button + Progress/Checkmark Button
             HStack(spacing: 8) {
@@ -145,6 +147,8 @@ struct HabitCard: View {
                         }
                     }
                     .buttonStyle(.plain)
+                    .accessibilityLabel("Start focus session for \(habit.name)")
+                    .accessibilityHint("Double tap to start a timed focus session")
                 }
 
                 if habit.habitType != .manual, habit.dailyGoal != nil {
@@ -214,6 +218,9 @@ struct HabitCard: View {
             }
         }
         .animation(.spring(response: 0.3, dampingFraction: 0.7), value: habit.isCompletedToday)
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("\(habit.name) progress, \(Int(habit.todayProgress * 100)) percent")
+        .accessibilityValue(habit.isCompletedToday ? "Completed" : "In progress")
     }
 
     // MARK: - Helpers
@@ -228,10 +235,7 @@ struct HabitCard: View {
             }
             return "\(hours)h"
         case "ml":
-            if value >= 1000 {
-                return String(format: "%.1fL", value / 1000)
-            }
-            return "\(Int(value))ml"
+            return String(format: "%.1fL", value / 1000)
         case "kcal":
             return "\(Int(value)) kcal"
         default:
@@ -242,13 +246,14 @@ struct HabitCard: View {
     private func toggleCompletion() {
         let calendar = Calendar.current
         if habit.isCompletedToday {
-            if let todayCompletion = habit.completions.first(where: { calendar.isDateInToday($0.date) }) {
-                habit.completions.removeAll { $0.id == todayCompletion.id }
+            if let todayCompletion = habit.safeCompletions.first(where: { calendar.isDateInToday($0.date) }) {
+                habit.completions?.removeAll { $0.id == todayCompletion.id }
                 modelContext.delete(todayCompletion)
             }
         } else {
             let completion = HabitCompletion(date: Date(), habit: habit)
-            habit.completions.append(completion)
+            if habit.completions == nil { habit.completions = [] }
+            habit.completions?.append(completion)
             modelContext.insert(completion)
         }
 
@@ -272,7 +277,9 @@ struct HabitCard: View {
                     NotificationCenter.default.post(name: .allHabitsCompleted, object: nil)
                 }
             } catch {
+                #if DEBUG
                 print("Failed to check all habits: \(error)")
+                #endif
             }
         }
     }
@@ -322,6 +329,8 @@ struct CheckmarkTapView: View {
             .contentShape(Circle())
         }
         .buttonStyle(CheckmarkButtonStyle(isCompleted: isCompleted))
+        .accessibilityLabel(isCompleted ? "Completed" : "Not completed")
+        .accessibilityHint("Double tap to toggle completion")
     }
 }
 

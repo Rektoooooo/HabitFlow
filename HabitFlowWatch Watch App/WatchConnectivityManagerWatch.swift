@@ -28,7 +28,9 @@ class WatchConnectivityManagerWatch: NSObject, ObservableObject {
 
     private func setupWatchConnectivity() {
         guard WCSession.isSupported() else {
+            #if DEBUG
             print("WatchConnectivity not supported")
+            #endif
             return
         }
 
@@ -41,7 +43,9 @@ class WatchConnectivityManagerWatch: NSObject, ObservableObject {
 
     func sendCompletion(habitId: UUID, completed: Bool) {
         guard let session = session, session.activationState == .activated else {
+            #if DEBUG
             print("WCSession not activated")
+            #endif
             return
         }
 
@@ -58,21 +62,27 @@ class WatchConnectivityManagerWatch: NSObject, ObservableObject {
         // Also try immediate message if reachable
         if session.isReachable {
             session.sendMessage(userInfo, replyHandler: nil) { error in
+                #if DEBUG
                 print("Failed to send immediate completion: \(error.localizedDescription)")
+                #endif
             }
         }
 
         // Play haptic feedback
         WKInterfaceDevice.current().play(completed ? .success : .click)
 
+        #if DEBUG
         print("Sent completion to iPhone: \(habitId) = \(completed)")
+        #endif
     }
 
     // MARK: - Request Sync from iPhone
 
     func requestSync() {
         guard let session = session, session.isReachable else {
+            #if DEBUG
             print("iPhone not reachable")
+            #endif
             return
         }
 
@@ -82,7 +92,9 @@ class WatchConnectivityManagerWatch: NSObject, ObservableObject {
         ]
 
         session.sendMessage(message, replyHandler: nil) { error in
+            #if DEBUG
             print("Failed to request sync: \(error.localizedDescription)")
+            #endif
         }
     }
 }
@@ -92,12 +104,15 @@ class WatchConnectivityManagerWatch: NSObject, ObservableObject {
 extension WatchConnectivityManagerWatch: WCSessionDelegate {
 
     nonisolated func session(_ session: WCSession, activationDidCompleteWith activationState: WCSessionActivationState, error: Error?) {
+        #if DEBUG
         if let error = error {
             print("WCSession activation failed: \(error.localizedDescription)")
             return
         }
-
         print("WCSession activated: \(activationState.rawValue)")
+        #else
+        if error != nil { return }
+        #endif
 
         Task { @MainActor in
             isReachable = session.isReachable
@@ -106,7 +121,9 @@ extension WatchConnectivityManagerWatch: WCSessionDelegate {
         // Check for any existing application context
         let context = session.receivedApplicationContext
         if !context.isEmpty {
+            #if DEBUG
             print("Found existing application context")
+            #endif
             processIncomingData(context)
         }
     }
@@ -114,7 +131,9 @@ extension WatchConnectivityManagerWatch: WCSessionDelegate {
     nonisolated func sessionReachabilityDidChange(_ session: WCSession) {
         Task { @MainActor in
             isReachable = session.isReachable
+            #if DEBUG
             print("iPhone reachability changed: \(session.isReachable)")
+            #endif
 
             // Request sync when iPhone becomes reachable
             if session.isReachable {
@@ -135,7 +154,9 @@ extension WatchConnectivityManagerWatch: WCSessionDelegate {
 
     // Receive application context (most reliable for simulator)
     nonisolated func session(_ session: WCSession, didReceiveApplicationContext applicationContext: [String : Any]) {
+        #if DEBUG
         print("Received application context from iPhone")
+        #endif
         processIncomingData(applicationContext)
     }
 
@@ -149,14 +170,18 @@ extension WatchConnectivityManagerWatch: WCSessionDelegate {
                 if let habitsData = data["data"] as? Data,
                    let habits = try? JSONDecoder().decode([WatchHabitData].self, from: habitsData) {
                     WatchDataManager.shared.saveHabits(habits)
+                    #if DEBUG
                     print("Received \(habits.count) habits from iPhone")
+                    #endif
 
                     // Play notification haptic
                     WKInterfaceDevice.current().play(.notification)
                 }
 
             default:
+                #if DEBUG
                 print("Unknown message type from iPhone: \(type)")
+                #endif
             }
         }
     }

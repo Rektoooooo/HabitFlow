@@ -60,11 +60,11 @@ enum GoalProgression: String, Codable, CaseIterable {
 
 @Model
 class Habit {
-    @Attribute(.unique) var id: UUID
-    var name: String
-    var icon: String
-    var color: String
-    var createdAt: Date
+    var id: UUID = UUID()
+    var name: String = ""
+    var icon: String = "checkmark.circle.fill"
+    var color: String = "#34C759"
+    var createdAt: Date = Date()
 
     // HealthKit properties
     var habitTypeRaw: String = HabitType.manual.rawValue
@@ -89,7 +89,7 @@ class Habit {
     var focusEnabled: Bool = false // Whether focus sessions are enabled for this habit
 
     @Relationship(deleteRule: .cascade, inverse: \HabitCompletion.habit)
-    var completions: [HabitCompletion]
+    var completions: [HabitCompletion]?
 
     // Computed property wrappers for enums (SwiftData doesn't support enums directly)
     var habitType: HabitType {
@@ -142,10 +142,15 @@ class Habit {
 
     // MARK: - Computed Properties
 
+    /// Safe accessor for completions (returns empty array if nil)
+    var safeCompletions: [HabitCompletion] {
+        completions ?? []
+    }
+
     /// Get today's tracked value for HealthKit habits
     var todayValue: Double? {
         let calendar = Calendar.current
-        return completions.first(where: { calendar.isDateInToday($0.date) })?.value
+        return safeCompletions.first(where: { calendar.isDateInToday($0.date) })?.value
     }
 
     /// Progress toward daily goal (0.0 to 1.0+)
@@ -159,7 +164,7 @@ class Habit {
 
     var isCompletedToday: Bool {
         let calendar = Calendar.current
-        guard let todayCompletion = completions.first(where: { calendar.isDateInToday($0.date) }) else {
+        guard let todayCompletion = safeCompletions.first(where: { calendar.isDateInToday($0.date) }) else {
             return false
         }
 
@@ -176,7 +181,7 @@ class Habit {
         let calendar = Calendar.current
 
         // Get unique dates where habit was actually completed (goal met for goal-based habits)
-        let completedDates = Set(completions.compactMap { completion -> Date? in
+        let completedDates = Set(safeCompletions.compactMap { completion -> Date? in
             let date = calendar.startOfDay(for: completion.date)
 
             // For habits with goals, check if goal was met
@@ -220,7 +225,7 @@ class Habit {
         let calendar = Calendar.current
 
         // Get unique dates where habit was actually completed (goal met for goal-based habits)
-        let completedDates = Set(completions.compactMap { completion -> Date? in
+        let completedDates = Set(safeCompletions.compactMap { completion -> Date? in
             let date = calendar.startOfDay(for: completion.date)
 
             // For habits with goals, check if goal was met
@@ -258,7 +263,7 @@ class Habit {
         let daysSinceCreation = calendar.dateComponents([.day], from: createdAt, to: Date()).day ?? 0
         guard daysSinceCreation > 0 else { return isCompletedToday ? 1.0 : 0.0 }
 
-        let uniqueDays = Set(completions.map { calendar.startOfDay(for: $0.date) }).count
+        let uniqueDays = Set(safeCompletions.map { calendar.startOfDay(for: $0.date) }).count
         return Double(uniqueDays) / Double(daysSinceCreation + 1)
     }
 }

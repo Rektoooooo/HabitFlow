@@ -24,7 +24,7 @@ struct PaywallView: View {
         ("widget.small.badge.plus", "All Widgets", "Home screen & history widgets"),
         ("chart.line.uptrend.xyaxis", "Advanced Insights", "Weekly patterns & statistics"),
         ("timer", "Focus Sessions", "Timed habit sessions with breaks"),
-        ("link", "Habit Stacking", "Chain habits together"),
+        ("link", "Habit Chains", "Chain habits together"),
         ("lightbulb.fill", "Smart Suggestions", "AI-powered habit recommendations"),
         ("icloud.fill", "iCloud Sync", "Access on all your devices")
     ]
@@ -49,7 +49,7 @@ struct PaywallView: View {
         NavigationStack {
             ZStack {
                 // Background
-                FloatingClouds(theme: .habitTracker(colorScheme))
+                FloatingClouds()
 
                 ScrollView(showsIndicators: false) {
                     VStack(spacing: 28) {
@@ -87,6 +87,8 @@ struct PaywallView: View {
                             .symbolRenderingMode(.hierarchical)
                             .foregroundStyle(tertiaryText)
                     }
+                    .accessibilityLabel("Close")
+                    .accessibilityHint("Double tap to close the subscription screen")
                 }
             }
             .alert("Error", isPresented: $showError) {
@@ -94,8 +96,15 @@ struct PaywallView: View {
             } message: {
                 Text(errorMessage)
             }
+            .onChange(of: store.showError) { _, newValue in
+                if newValue, let message = store.errorMessage {
+                    errorMessage = message
+                    showError = true
+                    store.dismissError()
+                }
+            }
             .onAppear {
-                selectedProduct = store.yearlyProduct ?? store.products.first
+                selectedProduct = store.monthlyProduct ?? store.products.first
             }
         }
     }
@@ -104,40 +113,14 @@ struct PaywallView: View {
 
     private var headerSection: some View {
         VStack(spacing: 16) {
-            // Pro Badge
-            ZStack {
-                // Outer glow
-                Circle()
-                    .fill(
-                        RadialGradient(
-                            colors: [accentPurple.opacity(0.4), .clear],
-                            center: .center,
-                            startRadius: 0,
-                            endRadius: 60
-                        )
-                    )
-                    .frame(width: 120, height: 120)
-
-                // Icon container
-                ZStack {
-                    Circle()
-                        .fill(
-                            LinearGradient(
-                                colors: [accentPurple, accentPink],
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            )
-                        )
-                        .frame(width: 80, height: 80)
-
-                    Image(systemName: "sparkles")
-                        .font(.system(size: 36, weight: .semibold))
-                        .foregroundStyle(.white)
-                }
-            }
+            // Premium Mascot
+            Image("PremiumMascot")
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+                .frame(width: 120, height: 120)
 
             VStack(spacing: 8) {
-                Text("Unlock HabitFlow Pro")
+                Text("Unlock Dotti Premium")
                     .font(.system(size: 28, weight: .bold, design: .rounded))
                     .foregroundStyle(primaryText)
 
@@ -149,13 +132,13 @@ struct PaywallView: View {
         .padding(.top, 10)
     }
 
-    // MARK: - Social Proof
+    // MARK: - Value Props
 
     private var socialProofSection: some View {
         HStack(spacing: 20) {
-            StatBadge(value: "10K+", label: "Active Users", icon: "person.2.fill")
-            StatBadge(value: "4.8", label: "App Rating", icon: "star.fill")
-            StatBadge(value: "1M+", label: "Habits Tracked", icon: "checkmark.circle.fill")
+            StatBadge(value: "No Ads", label: "Ever", icon: "hand.raised.fill")
+            StatBadge(value: "Secure", label: "iCloud Sync", icon: "lock.shield.fill")
+            StatBadge(value: "Fast", label: "Support", icon: "bubble.left.fill")
         }
         .padding(.vertical, 16)
         .padding(.horizontal, 12)
@@ -166,7 +149,7 @@ struct PaywallView: View {
 
     private var featuresSection: some View {
         VStack(alignment: .leading, spacing: 16) {
-            Text("Everything in Pro")
+            Text("Everything in Premium")
                 .font(.headline)
                 .foregroundStyle(primaryText)
                 .padding(.horizontal, 4)
@@ -197,24 +180,6 @@ struct PaywallView: View {
                     .tint(accentPurple)
                     .frame(height: 160)
             } else {
-                // Yearly - Best Value
-                if let yearly = store.yearlyProduct {
-                    PricingCard(
-                        product: yearly,
-                        isSelected: selectedProduct?.id == yearly.id,
-                        badge: "BEST VALUE",
-                        badgeColor: .green,
-                        savingsText: calculateSavings(),
-                        primaryText: primaryText,
-                        secondaryText: secondaryText,
-                        accentColor: accentPurple
-                    ) {
-                        withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
-                            selectedProduct = yearly
-                        }
-                    }
-                }
-
                 // Monthly
                 if let monthly = store.monthlyProduct {
                     PricingCard(
@@ -233,7 +198,25 @@ struct PaywallView: View {
                     }
                 }
 
-                // Lifetime (if available)
+                // Yearly - Best Value
+                if let yearly = store.yearlyProduct {
+                    PricingCard(
+                        product: yearly,
+                        isSelected: selectedProduct?.id == yearly.id,
+                        badge: "BEST VALUE",
+                        badgeColor: .green,
+                        savingsText: calculateSavings(),
+                        primaryText: primaryText,
+                        secondaryText: secondaryText,
+                        accentColor: accentPurple
+                    ) {
+                        withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                            selectedProduct = yearly
+                        }
+                    }
+                }
+
+                // Lifetime
                 if let lifetime = store.lifetimeProduct {
                     PricingCard(
                         product: lifetime,
@@ -269,7 +252,7 @@ struct PaywallView: View {
                         ProgressView()
                             .tint(.white)
                     } else {
-                        Text("Start Pro")
+                        Text("Start Premium")
                             .fontWeight(.semibold)
 
                         Image(systemName: "arrow.right")
@@ -291,6 +274,8 @@ struct PaywallView: View {
             }
             .disabled(selectedProduct == nil || isPurchasing)
             .opacity(selectedProduct == nil ? 0.6 : 1)
+            .accessibilityLabel(isPurchasing ? "Purchasing" : "Start Premium subscription")
+            .accessibilityHint("Double tap to purchase the selected subscription plan")
 
             // Restore Button
             Button {
@@ -302,6 +287,8 @@ struct PaywallView: View {
                     .font(.footnote.weight(.medium))
                     .foregroundStyle(secondaryText)
             }
+            .accessibilityLabel("Restore Purchases")
+            .accessibilityHint("Double tap to restore previously purchased subscriptions")
         }
     }
 
@@ -313,7 +300,7 @@ struct PaywallView: View {
             HStack(spacing: 8) {
                 Image(systemName: "checkmark.shield.fill")
                     .foregroundStyle(.green)
-                Text("7-day free trial included")
+                Text("Cancel anytime")
                     .font(.caption.weight(.medium))
                     .foregroundStyle(secondaryText)
             }
@@ -419,6 +406,8 @@ struct FeatureCard: View {
         }
         .padding(10)
         .liquidGlass(cornerRadius: 12)
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("\(title) feature included")
     }
 }
 
@@ -532,6 +521,10 @@ struct PricingCard: View {
             )
         }
         .buttonStyle(.plain)
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("\(product.subscription?.subscriptionPeriod.displayName ?? "Lifetime") plan, \(product.displayPrice)")
+        .accessibilityHint(isSelected ? "Currently selected" : "Double tap to select this plan")
+        .accessibilityAddTraits(isSelected ? .isSelected : [])
     }
 }
 

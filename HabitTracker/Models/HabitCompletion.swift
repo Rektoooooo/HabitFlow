@@ -10,13 +10,13 @@ import SwiftData
 
 @Model
 class HabitCompletion {
-    @Attribute(.unique) var id: UUID
-    var date: Date
+    var id: UUID = UUID()
+    var date: Date = Date()
     var habit: Habit?
 
     // HealthKit value tracking
     var value: Double?         // Numeric value (e.g., 2000ml, 7.5 hours)
-    var isAutoSynced: Bool     // Track if from HealthKit
+    var isAutoSynced: Bool = false  // Track if from HealthKit
 
     init(date: Date = Date(), habit: Habit? = nil, value: Double? = nil, isAutoSynced: Bool = false) {
         self.id = UUID()

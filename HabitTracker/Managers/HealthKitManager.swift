@@ -64,20 +64,45 @@ class HealthKitManager: ObservableObject {
             throw HealthKitError.notAvailable
         }
 
+        // Request authorization from HealthKit
         try await healthStore.requestAuthorization(toShare: [], read: readTypes)
+
+        // Mark that we've requested authorization for these types
+        // (HealthKit doesn't reveal actual read permission status for privacy)
+        markAuthorizationRequested(for: readTypes)
+
         await checkAuthorizationStatus()
     }
 
+    /// Check if authorization was already requested for a specific habit type.
+    /// For read-only access, HealthKit doesn't reveal the actual authorization status,
+    /// so we check if we need to request authorization (if not, we've already asked).
     func isAuthorized(for habitType: HabitType) -> Bool {
         switch habitType {
         case .healthKitSleep:
-            return authorizationStatus[Self.sleepType] == .sharingAuthorized
+            return hasRequestedAuthorization(for: Self.sleepType)
         case .healthKitWater:
-            return authorizationStatus[Self.waterType] == .sharingAuthorized
+            return hasRequestedAuthorization(for: Self.waterType)
         case .healthKitCalories:
-            return authorizationStatus[Self.caloriesType] == .sharingAuthorized
+            return hasRequestedAuthorization(for: Self.caloriesType)
         case .manual:
             return true
+        }
+    }
+
+    /// Check if we've already requested authorization for a specific type.
+    /// Uses statusForAuthorizationRequest which tells us if we need to show the prompt.
+    private func hasRequestedAuthorization(for type: HKObjectType) -> Bool {
+        // Check if we've stored that authorization was requested
+        let key = "healthkit.authorized.\(type.identifier)"
+        return UserDefaults.standard.bool(forKey: key)
+    }
+
+    /// Mark that we've requested authorization for a specific type
+    private func markAuthorizationRequested(for types: Set<HKObjectType>) {
+        for type in types {
+            let key = "healthkit.authorized.\(type.identifier)"
+            UserDefaults.standard.set(true, forKey: key)
         }
     }
 
@@ -86,12 +111,16 @@ class HealthKitManager: ObservableObject {
     func fetchSleepData(for date: Date) async throws -> TimeInterval {
         let calendar = Calendar.current
         let startOfDay = calendar.startOfDay(for: date)
-        let endOfDay = calendar.date(byAdding: .day, value: 1, to: startOfDay)!
+        guard let endOfDay = calendar.date(byAdding: .day, value: 1, to: startOfDay) else {
+            throw HealthKitError.queryFailed
+        }
 
         // For sleep, we want to capture sleep that ENDED on this day
         // (e.g., sleep from 23:00 yesterday to 07:00 today should count for today)
         // Look back from 6 PM previous day to capture overnight sleep
-        let sleepWindowStart = calendar.date(byAdding: .hour, value: -6, to: startOfDay)!
+        guard let sleepWindowStart = calendar.date(byAdding: .hour, value: -6, to: startOfDay) else {
+            throw HealthKitError.queryFailed
+        }
 
         let predicate = HKQuery.predicateForSamples(
             withStart: sleepWindowStart,
@@ -143,7 +172,9 @@ class HealthKitManager: ObservableObject {
     func fetchWaterData(for date: Date) async throws -> Double {
         let calendar = Calendar.current
         let startOfDay = calendar.startOfDay(for: date)
-        let endOfDay = calendar.date(byAdding: .day, value: 1, to: startOfDay)!
+        guard let endOfDay = calendar.date(byAdding: .day, value: 1, to: startOfDay) else {
+            throw HealthKitError.queryFailed
+        }
 
         let predicate = HKQuery.predicateForSamples(
             withStart: startOfDay,
@@ -175,7 +206,9 @@ class HealthKitManager: ObservableObject {
     func fetchCaloriesData(for date: Date) async throws -> Double {
         let calendar = Calendar.current
         let startOfDay = calendar.startOfDay(for: date)
-        let endOfDay = calendar.date(byAdding: .day, value: 1, to: startOfDay)!
+        guard let endOfDay = calendar.date(byAdding: .day, value: 1, to: startOfDay) else {
+            throw HealthKitError.queryFailed
+        }
 
         let predicate = HKQuery.predicateForSamples(
             withStart: startOfDay,

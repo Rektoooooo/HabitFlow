@@ -32,7 +32,9 @@ class WatchDataManager: ObservableObject {
         guard let defaults = UserDefaults(suiteName: suiteName),
               let data = defaults.data(forKey: habitsKey),
               let decoded = try? JSONDecoder().decode([WatchHabitData].self, from: data) else {
+            #if DEBUG
             print("No habits found in App Group")
+            #endif
 
             #if targetEnvironment(simulator)
             // Load sample data for simulator testing
@@ -45,12 +47,16 @@ class WatchDataManager: ObservableObject {
 
         habits = decoded
         lastSyncDate = defaults.object(forKey: lastSyncKey) as? Date
+        #if DEBUG
         print("Loaded \(habits.count) habits from App Group")
+        #endif
     }
 
     #if targetEnvironment(simulator)
     private func loadSampleDataForSimulator() {
+        #if DEBUG
         print("Loading sample data for simulator")
+        #endif
         habits = [
             WatchHabitData(id: UUID(), name: "Morning Meditation", icon: "brain.head.profile", color: "#A855F7", isCompletedToday: false, currentStreak: 5),
             WatchHabitData(id: UUID(), name: "Exercise", icon: "figure.run", color: "#10B981", isCompletedToday: true, currentStreak: 12),
@@ -67,7 +73,9 @@ class WatchDataManager: ObservableObject {
 
         guard let defaults = UserDefaults(suiteName: suiteName),
               let data = try? JSONEncoder().encode(newHabits) else {
+            #if DEBUG
             print("Failed to save habits")
+            #endif
             return
         }
 
@@ -78,14 +86,18 @@ class WatchDataManager: ObservableObject {
         // Reload complications
         WidgetCenter.shared.reloadAllTimelines()
 
+        #if DEBUG
         print("Saved \(newHabits.count) habits to App Group")
+        #endif
     }
 
     // MARK: - Toggle Habit Completion
 
     func toggleCompletion(for habitId: UUID) {
         guard let index = habits.firstIndex(where: { $0.id == habitId }) else {
+            #if DEBUG
             print("Habit not found: \(habitId)")
+            #endif
             return
         }
 

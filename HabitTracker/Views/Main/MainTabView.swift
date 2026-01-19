@@ -9,12 +9,8 @@ import SwiftUI
 import SwiftData
 
 struct MainTabView: View {
-    @AppStorage("appearanceMode") private var appearanceMode: String = AppearanceMode.system.rawValue
+    @ObservedObject private var themeManager = ThemeManager.shared
     @State private var selectedTab = 0
-
-    private var selectedAppearance: AppearanceMode {
-        AppearanceMode(rawValue: appearanceMode) ?? .system
-    }
 
     var body: some View {
         TabView(selection: $selectedTab) {
@@ -36,11 +32,11 @@ struct MainTabView: View {
                 }
                 .tag(2)
         }
-        .tint(AppTheme.Colors.accentPrimary)
+        .tint(themeManager.primaryColor)
         .onChange(of: selectedTab) { _, _ in
             HapticManager.shared.tabChanged()
         }
-        .preferredColorScheme(selectedAppearance.colorScheme)
+        .preferredColorScheme(themeManager.appearanceMode.colorScheme)
     }
 }
 

@@ -16,9 +16,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "ECD9819C2F151D860005D032"
-               BuildableName = "HabitTracker.app"
-               BlueprintName = "HabitTracker"
-               ReferencedContainer = "container:HabitTracker.xcodeproj">
+               BuildableName = "Dotti.app"
+               BlueprintName = "Dotti"
+               ReferencedContainer = "container:Dotti.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -36,9 +36,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "ECD981B32F151D880005D032"
-               BuildableName = "HabitTrackerUITests.xctest"
-               BlueprintName = "HabitTrackerUITests"
-               ReferencedContainer = "container:HabitTracker.xcodeproj">
+               BuildableName = "DottiUITests.xctest"
+               BlueprintName = "DottiUITests"
+               ReferencedContainer = "container:Dotti.xcodeproj">
             </BuildableReference>
          </TestableReference>
          <TestableReference
@@ -47,9 +47,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "ECD981A92F151D880005D032"
-               BuildableName = "HabitTrackerTests.xctest"
-               BlueprintName = "HabitTrackerTests"
-               ReferencedContainer = "container:HabitTracker.xcodeproj">
+               BuildableName = "DottiTests.xctest"
+               BlueprintName = "DottiTests"
+               ReferencedContainer = "container:Dotti.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -69,9 +69,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "ECD9819C2F151D860005D032"
-            BuildableName = "HabitTracker.app"
-            BlueprintName = "HabitTracker"
-            ReferencedContainer = "container:HabitTracker.xcodeproj">
+            BuildableName = "Dotti.app"
+            BlueprintName = "Dotti"
+            ReferencedContainer = "container:Dotti.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -86,9 +86,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "ECD9819C2F151D860005D032"
-            BuildableName = "HabitTracker.app"
-            BlueprintName = "HabitTracker"
-            ReferencedContainer = "container:HabitTracker.xcodeproj">
+            BuildableName = "Dotti.app"
+            BlueprintName = "Dotti"
+            ReferencedContainer = "container:Dotti.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

@@ -13,6 +13,7 @@ import SwiftUI
 struct Provider: AppIntentTimelineProvider {
     private let suiteName = "group.ic-servis.com.HabitTracker"
     private let habitsKey = "widgetHabits"
+    private let habitsContainerKey = "widgetHabitsContainer"
 
     func placeholder(in context: Context) -> SimpleEntry {
         SimpleEntry(
@@ -22,39 +23,103 @@ struct Provider: AppIntentTimelineProvider {
                 WidgetHabitData(id: UUID(), name: "Exercise", icon: "figure.run", color: "#A855F7", isCompletedToday: true, currentStreak: 5),
                 WidgetHabitData(id: UUID(), name: "Read", icon: "book.fill", color: "#10B981", isCompletedToday: false, currentStreak: 3),
                 WidgetHabitData(id: UUID(), name: "Meditate", icon: "brain.head.profile", color: "#3B82F6", isCompletedToday: true, currentStreak: 7)
-            ]
+            ],
+            lastSyncedDate: Date()
         )
     }
 
     func snapshot(for configuration: ConfigurationAppIntent, in context: Context) async -> SimpleEntry {
-        let habits = loadHabits()
-        return SimpleEntry(date: Date(), configuration: configuration, habits: habits)
+        let (habits, lastSynced) = loadHabits()
+        return SimpleEntry(date: Date(), configuration: configuration, habits: habits, lastSyncedDate: lastSynced)
     }
 
     func timeline(for configuration: ConfigurationAppIntent, in context: Context) async -> Timeline<SimpleEntry> {
-        let habits = loadHabits()
+        let (habits, lastSynced) = loadHabits()
         let currentDate = Date()
         let calendar = Calendar.current
 
         var entries: [SimpleEntry] = []
-        entries.append(SimpleEntry(date: currentDate, configuration: configuration, habits: habits))
 
+        // Current entry
+        entries.append(SimpleEntry(date: currentDate, configuration: configuration, habits: habits, lastSyncedDate: lastSynced))
+
+        // Create entry for midnight with reset completion status
         if let tomorrow = calendar.date(byAdding: .day, value: 1, to: currentDate),
            let midnight = calendar.date(bySettingHour: 0, minute: 0, second: 0, of: tomorrow) {
-            entries.append(SimpleEntry(date: midnight, configuration: configuration, habits: habits))
+            // At midnight, show all habits as not completed (new day)
+            let resetHabits = habits.map { habit in
+                WidgetHabitData(
+                    id: habit.id,
+                    name: habit.name,
+                    icon: habit.icon,
+                    color: habit.color,
+                    isCompletedToday: false,
+                    currentStreak: habit.currentStreak
+                )
+            }
+            entries.append(SimpleEntry(date: midnight, configuration: configuration, habits: resetHabits, lastSyncedDate: lastSynced))
         }
 
-        let refreshDate = calendar.date(byAdding: .minute, value: 15, to: currentDate) ?? currentDate
+        // Refresh at midnight to ensure data is fresh for the new day
+        let refreshDate: Date
+        if let tomorrow = calendar.date(byAdding: .day, value: 1, to: currentDate),
+           let midnight = calendar.date(bySettingHour: 0, minute: 1, second: 0, of: tomorrow) {
+            // Refresh shortly after midnight
+            refreshDate = midnight
+        } else {
+            // Fallback to 15 minutes
+            refreshDate = calendar.date(byAdding: .minute, value: 15, to: currentDate) ?? currentDate
+        }
+
         return Timeline(entries: entries, policy: .after(refreshDate))
     }
 
-    private func loadHabits() -> [WidgetHabitData] {
-        guard let defaults = UserDefaults(suiteName: suiteName),
-              let data = defaults.data(forKey: habitsKey),
-              let habits = try? JSONDecoder().decode([WidgetHabitData].self, from: data) else {
-            return []
+    private func loadHabits() -> (habits: [WidgetHabitData], lastSynced: Date?) {
+        guard let defaults = UserDefaults(suiteName: suiteName) else {
+            return ([], nil)
         }
-        return habits
+
+        // Try to load from the new container format with timestamp
+        if let containerData = defaults.data(forKey: habitsContainerKey),
+           let container = try? JSONDecoder().decode(WidgetDataContainer.self, from: containerData) {
+            // Check if data is from today
+            if container.isFromToday {
+                return (container.habits, container.lastUpdatedDate)
+            } else {
+                // Data is from a previous day - reset completion status
+                let resetHabits = container.habits.map { habit in
+                    WidgetHabitData(
+                        id: habit.id,
+                        name: habit.name,
+                        icon: habit.icon,
+                        color: habit.color,
+                        isCompletedToday: false, // Reset for new day
+                        currentStreak: habit.currentStreak
+                    )
+                }
+                return (resetHabits, container.lastUpdatedDate)
+            }
+        }
+
+        // Fall back to legacy format (without timestamp)
+        guard let data = defaults.data(forKey: habitsKey),
+              let habits = try? JSONDecoder().decode([WidgetHabitData].self, from: data) else {
+            return ([], nil)
+        }
+        return (habits, nil)
+    }
+}
+
+// MARK: - Widget Data Container
+
+/// Container that wraps habit data with a timestamp for freshness checking
+struct WidgetDataContainer: Codable {
+    let habits: [WidgetHabitData]
+    let lastUpdatedDate: Date
+
+    /// Check if the data is from today
+    var isFromToday: Bool {
+        Calendar.current.isDateInToday(lastUpdatedDate)
     }
 }
 
@@ -64,6 +129,7 @@ struct SimpleEntry: TimelineEntry {
     let date: Date
     let configuration: ConfigurationAppIntent
     let habits: [WidgetHabitData]
+    let lastSyncedDate: Date?
 }
 
 // MARK: - Widget Data Model
@@ -537,7 +603,7 @@ struct AccessoryRectangularView: View {
             HStack(spacing: 6) {
                 Image(systemName: "flame.fill")
                     .font(.headline)
-                Text("HabitFlow")
+                Text("Habits")
                     .font(.system(.headline, design: .rounded, weight: .semibold))
             }
 
@@ -611,7 +677,7 @@ struct HabitFlowWidget: Widget {
                     WidgetBackground()
                 }
         }
-        .configurationDisplayName("HabitFlow")
+        .configurationDisplayName("Habits")
         .description("Track your daily habits.")
         .supportedFamilies([
             .systemSmall,
@@ -644,7 +710,8 @@ extension ConfigurationAppIntent {
             WidgetHabitData(id: UUID(), name: "Exercise", icon: "figure.run", color: "#A855F7", isCompletedToday: true, currentStreak: 5),
             WidgetHabitData(id: UUID(), name: "Read", icon: "book.fill", color: "#10B981", isCompletedToday: false, currentStreak: 3),
             WidgetHabitData(id: UUID(), name: "Meditate", icon: "brain.head.profile", color: "#3B82F6", isCompletedToday: true, currentStreak: 7)
-        ]
+        ],
+        lastSyncedDate: .now
     )
 }
 
@@ -659,7 +726,8 @@ extension ConfigurationAppIntent {
             WidgetHabitData(id: UUID(), name: "Read", icon: "book.fill", color: "#10B981", isCompletedToday: false, currentStreak: 3),
             WidgetHabitData(id: UUID(), name: "Meditate", icon: "brain.head.profile", color: "#3B82F6", isCompletedToday: true, currentStreak: 7),
             WidgetHabitData(id: UUID(), name: "Journal", icon: "pencil.line", color: "#F59E0B", isCompletedToday: false, currentStreak: 2)
-        ]
+        ],
+        lastSyncedDate: .now
     )
 }
 
@@ -676,6 +744,7 @@ extension ConfigurationAppIntent {
             WidgetHabitData(id: UUID(), name: "Journal", icon: "pencil.line", color: "#F59E0B", isCompletedToday: false, currentStreak: 2),
             WidgetHabitData(id: UUID(), name: "Water", icon: "drop.fill", color: "#06B6D4", isCompletedToday: true, currentStreak: 12),
             WidgetHabitData(id: UUID(), name: "Sleep", icon: "bed.double.fill", color: "#EC4899", isCompletedToday: false, currentStreak: 4)
-        ]
+        ],
+        lastSyncedDate: .now
     )
 }

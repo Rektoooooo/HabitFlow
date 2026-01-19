@@ -9,6 +9,7 @@ import SwiftUI
 
 struct SuggestionsPreviewSection: View {
     @Environment(\.colorScheme) private var colorScheme
+    @ObservedObject private var themeManager = ThemeManager.shared
     let suggestions: [HabitSuggestion]
     let onShowSuggestions: () -> Void
     let onSelectSuggestion: (HabitSuggestion) -> Void
@@ -20,13 +21,7 @@ struct SuggestionsPreviewSection: View {
                 HStack(spacing: 6) {
                     Image(systemName: "sparkles")
                         .font(.subheadline)
-                        .foregroundStyle(
-                            LinearGradient(
-                                colors: [Color(hex: "#A855F7"), Color(hex: "#EC4899")],
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            )
-                        )
+                        .foregroundStyle(themeManager.primaryGradient)
 
                     Text("Suggested for you")
                         .font(.subheadline.weight(.semibold))
@@ -40,7 +35,7 @@ struct SuggestionsPreviewSection: View {
                 } label: {
                     Text("See all")
                         .font(.caption.weight(.medium))
-                        .foregroundStyle(Color(hex: "#A855F7"))
+                        .foregroundStyle(themeManager.primaryColor)
                 }
             }
             .padding(.top, 8)

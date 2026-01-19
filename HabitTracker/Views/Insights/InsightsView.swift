@@ -35,7 +35,7 @@ struct InsightsView: View {
         NavigationStack {
             ZStack {
                 // Background
-                FloatingClouds(theme: .habitTracker(colorScheme))
+                FloatingClouds()
 
                 ScrollView {
                     VStack(spacing: 20) {

@@ -33,7 +33,7 @@ struct SuggestionsView: View {
         NavigationStack {
             ZStack {
                 // Background
-                FloatingClouds(theme: .habitTracker(colorScheme))
+                FloatingClouds()
 
                 ScrollView {
                     VStack(spacing: 20) {
@@ -201,7 +201,7 @@ struct AddHabitFromSuggestionView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                FloatingClouds(theme: .habitTracker(colorScheme))
+                FloatingClouds()
 
                 VStack(spacing: 24) {
                     // Preview card

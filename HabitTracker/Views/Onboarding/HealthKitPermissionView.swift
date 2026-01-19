@@ -13,6 +13,7 @@ struct HealthKitPermissionView: View {
     let onSkip: () -> Void
 
     @ObservedObject private var healthKitManager = HealthKitManager.shared
+    @ObservedObject private var themeManager = ThemeManager.shared
     @State private var isRequesting = false
     @State private var error: String?
     @Environment(\.dismiss) private var dismiss
@@ -32,22 +33,18 @@ struct HealthKitPermissionView: View {
     }
 
     private var accentColor: Color {
-        Color(red: 0.65, green: 0.35, blue: 0.85)
+        themeManager.primaryColor
     }
 
     private var accentGradient: LinearGradient {
-        LinearGradient(
-            colors: [Color(red: 0.65, green: 0.35, blue: 0.85), Color(red: 0.85, green: 0.35, blue: 0.65)],
-            startPoint: .topLeading,
-            endPoint: .bottomTrailing
-        )
+        themeManager.primaryGradient
     }
 
     var body: some View {
         NavigationStack {
             ZStack {
                 // Floating clouds background
-                FloatingClouds(theme: .habitTracker(colorScheme))
+                FloatingClouds()
 
                 VStack(spacing: 32) {
                     Spacer()
@@ -69,7 +66,7 @@ struct HealthKitPermissionView: View {
                             .font(.title2.weight(.bold))
                             .foregroundStyle(primaryText)
 
-                        Text("Allow HabitFlow to read your \(dataTypeDescription) data to automatically track your progress.")
+                        Text("Allow Dotti to read your \(dataTypeDescription) data to automatically track your progress.")
                             .font(.subheadline)
                             .foregroundStyle(secondaryText)
                             .multilineTextAlignment(.center)
@@ -156,14 +153,15 @@ struct HealthKitPermissionView: View {
         isRequesting = true
         error = nil
 
-        Task {
+        Task { @MainActor in
             do {
                 try await healthKitManager.requestAuthorization()
+                isRequesting = false
                 onAuthorized()
             } catch {
                 self.error = error.localizedDescription
+                isRequesting = false
             }
-            isRequesting = false
         }
     }
 }

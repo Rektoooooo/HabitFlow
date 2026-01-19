@@ -14,6 +14,7 @@ struct StatsView: View {
     @Query(sort: \FocusSession.startedAt, order: .reverse) private var focusSessions: [FocusSession]
     @ObservedObject private var insightsEngine = InsightsEngine.shared
     @ObservedObject private var focusManager = FocusSessionManager.shared
+    @ObservedObject private var themeManager = ThemeManager.shared
 
     @State private var insights: [Insight] = []
     @State private var showingInsights = false
@@ -22,7 +23,7 @@ struct StatsView: View {
         NavigationStack {
             ZStack {
                 // Floating clouds background
-                FloatingClouds(theme: .habitTracker(colorScheme))
+                FloatingClouds()
 
                 if habits.isEmpty {
                     emptyState
@@ -126,7 +127,7 @@ struct StatsView: View {
 
                 StatCard(
                     title: "Total Completions",
-                    value: "\(habits.reduce(0) { $0 + $1.completions.count })",
+                    value: "\(habits.reduce(0) { $0 + $1.safeCompletions.count })",
                     icon: "star.fill",
                     color: .yellow
                 )
@@ -206,7 +207,7 @@ struct StatsView: View {
 
                             RoundedRectangle(cornerRadius: 6)
                                 .fill(dayData.isToday
-                                      ? LinearGradient(colors: [Color(red: 0.65, green: 0.35, blue: 0.85), Color(red: 0.85, green: 0.35, blue: 0.65)], startPoint: .top, endPoint: .bottom)
+                                      ? themeManager.primaryGradient
                                       : LinearGradient(colors: [colorScheme == .dark ? Color.white.opacity(0.2) : Color(red: 0.8, green: 0.75, blue: 0.9)], startPoint: .top, endPoint: .bottom))
                                 .frame(height: barHeight)
                                 .animation(
@@ -229,7 +230,7 @@ struct StatsView: View {
                 // Legend
                 HStack {
                     Circle()
-                        .fill(LinearGradient(colors: [Color(red: 0.65, green: 0.35, blue: 0.85), Color(red: 0.85, green: 0.35, blue: 0.65)], startPoint: .topLeading, endPoint: .bottomTrailing))
+                        .fill(themeManager.primaryGradient)
                         .frame(width: 8, height: 8)
                     Text("Today")
                         .font(.caption)
@@ -320,7 +321,7 @@ struct StatsView: View {
                 } label: {
                     Text("See all")
                         .font(.caption.weight(.medium))
-                        .foregroundStyle(Color(hex: "#A855F7"))
+                        .foregroundStyle(themeManager.primaryColor)
                 }
             }
 
@@ -349,7 +350,7 @@ struct StatsView: View {
             let date = calendar.date(byAdding: .day, value: -daysAgo, to: today)!
             let dayName = date.formatted(.dateTime.weekday(.abbreviated))
             let completions = habits.reduce(0) { count, habit in
-                count + habit.completions.filter { calendar.isDate($0.date, inSameDayAs: date) }.count
+                count + habit.safeCompletions.filter { calendar.isDate($0.date, inSameDayAs: date) }.count
             }
             return (day: String(dayName.prefix(3)), completions: completions, isToday: daysAgo == 0)
         }

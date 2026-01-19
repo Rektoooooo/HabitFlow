@@ -174,11 +174,11 @@ class HabitStackManager: ObservableObject {
                 guard habit1.stackId == nil && habit2.stackId == nil else { continue }
 
                 // Calculate correlation
-                let habit1Dates = Set(habit1.completions
+                let habit1Dates = Set(habit1.safeCompletions
                     .filter { $0.date >= thirtyDaysAgo }
                     .map { calendar.startOfDay(for: $0.date) })
 
-                let habit2Dates = Set(habit2.completions
+                let habit2Dates = Set(habit2.safeCompletions
                     .filter { $0.date >= thirtyDaysAgo }
                     .map { calendar.startOfDay(for: $0.date) })
 

@@ -233,7 +233,7 @@ struct ContributionGridView: View {
             return []
         }
 
-        let completedDates = Set(habit.completions.map { calendar.startOfDay(for: $0.date) })
+        let completedDates = Set(habit.safeCompletions.map { calendar.startOfDay(for: $0.date) })
 
         for weekIndex in 0..<weeks {
             guard let currentWeekStart = calendar.date(byAdding: .weekOfYear, value: weekIndex, to: weekStart) else {

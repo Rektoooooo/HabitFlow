@@ -150,7 +150,7 @@ struct OnboardingView: View {
                 .shadow(color: Color(hex: "#A855F7").opacity(0.5), radius: 30, x: 0, y: 10)
 
             // App name
-            Text("HabitFlow")
+            Text("Dotti")
                 .font(.system(size: 42, weight: .bold, design: .rounded))
                 .foregroundStyle(
                     LinearGradient(
@@ -296,6 +296,8 @@ struct OnboardingView: View {
                     .foregroundStyle(.white.opacity(0.6))
             }
             .disabled(isSigningIn)
+            .accessibilityLabel("Continue without signing in")
+            .accessibilityHint("Double tap to skip sign in and continue as a guest")
 
             // Privacy note
             Text("By continuing, you agree to our Terms of Service and Privacy Policy")

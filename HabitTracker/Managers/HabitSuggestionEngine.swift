@@ -239,7 +239,7 @@ class HabitSuggestionEngine: ObservableObject {
 
     private func generateShortReason(template: HabitTemplate, relatedHabits: [String]) -> String {
         if relatedHabits.isEmpty {
-            return "Popular with HabitFlow users"
+            return "Popular with Dotti users"
         }
 
         if relatedHabits.count == 1 {

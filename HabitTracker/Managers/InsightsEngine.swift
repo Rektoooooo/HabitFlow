@@ -55,7 +55,7 @@ class InsightsEngine: ObservableObject {
     private func createStarterInsight() -> Insight {
         Insight(
             type: .motivation,
-            title: "Welcome to HabitFlow!",
+            title: "Welcome to Dotti!",
             message: "Add your first habit to start tracking and receive personalized insights.",
             priority: .high,
             isPositive: true
@@ -90,11 +90,14 @@ class InsightsEngine: ObservableObject {
 
         // Streak at risk (completed yesterday but not today)
         let todayStart = calendar.startOfDay(for: Date())
+        guard let yesterday = calendar.date(byAdding: .day, value: -1, to: todayStart) else {
+            return insights
+        }
+
         for habit in habits {
             if habit.currentStreak > 3 && !habit.isCompletedToday {
                 // Check if completed yesterday
-                let yesterday = calendar.date(byAdding: .day, value: -1, to: todayStart)!
-                let completedYesterday = habit.completions.contains { completion in
+                let completedYesterday = habit.safeCompletions.contains { completion in
                     calendar.isDate(completion.date, inSameDayAs: yesterday)
                 }
 
@@ -202,7 +205,9 @@ class InsightsEngine: ObservableObject {
         var dayPossible: [Int: Int] = [:] // dayIndex -> possible completions
 
         let today = Date()
-        let thirtyDaysAgo = calendar.date(byAdding: .day, value: -30, to: today)!
+        guard let thirtyDaysAgo = calendar.date(byAdding: .day, value: -30, to: today) else {
+            return []
+        }
 
         for habit in habits {
             let habitCreated = habit.createdAt
@@ -212,14 +217,17 @@ class InsightsEngine: ObservableObject {
                 let dayIndex = calendar.component(.weekday, from: currentDate)
                 dayPossible[dayIndex, default: 0] += 1
 
-                let wasCompleted = habit.completions.contains { completion in
+                let wasCompleted = habit.safeCompletions.contains { completion in
                     calendar.isDate(completion.date, inSameDayAs: currentDate)
                 }
                 if wasCompleted {
                     dayCompletions[dayIndex, default: 0] += 1
                 }
 
-                currentDate = calendar.date(byAdding: .day, value: 1, to: currentDate)!
+                guard let nextDate = calendar.date(byAdding: .day, value: 1, to: currentDate) else {
+                    break
+                }
+                currentDate = nextDate
             }
         }
 
@@ -245,7 +253,7 @@ class InsightsEngine: ObservableObject {
         var insights: [Insight] = []
 
         // Total completions milestones
-        let totalCompletions = habits.reduce(0) { $0 + $1.completions.count }
+        let totalCompletions = habits.reduce(0) { $0 + $1.safeCompletions.count }
         let milestones = [50, 100, 250, 500, 1000, 2500, 5000]
 
         for milestone in milestones {
@@ -340,14 +348,16 @@ class InsightsEngine: ObservableObject {
 
     private func calculateWeeklyComparison(habits: [Habit]) -> WeeklyComparison {
         let today = Date()
-        let thisWeekStart = calendar.date(from: calendar.dateComponents([.yearForWeekOfYear, .weekOfYear], from: today))!
-        let lastWeekStart = calendar.date(byAdding: .weekOfYear, value: -1, to: thisWeekStart)!
+        guard let thisWeekStart = calendar.date(from: calendar.dateComponents([.yearForWeekOfYear, .weekOfYear], from: today)),
+              let lastWeekStart = calendar.date(byAdding: .weekOfYear, value: -1, to: thisWeekStart) else {
+            return WeeklyComparison(currentWeekCompletions: 0, previousWeekCompletions: 0, changePercent: 0, isImprovement: false)
+        }
 
         var currentWeek = 0
         var previousWeek = 0
 
         for habit in habits {
-            for completion in habit.completions {
+            for completion in habit.safeCompletions {
                 if completion.date >= thisWeekStart {
                     currentWeek += 1
                 } else if completion.date >= lastWeekStart && completion.date < thisWeekStart {
@@ -370,13 +380,15 @@ class InsightsEngine: ObservableObject {
 
     private func calculateHabitWeeklyComparison(habit: Habit) -> WeeklyComparison {
         let today = Date()
-        let thisWeekStart = calendar.date(from: calendar.dateComponents([.yearForWeekOfYear, .weekOfYear], from: today))!
-        let lastWeekStart = calendar.date(byAdding: .weekOfYear, value: -1, to: thisWeekStart)!
+        guard let thisWeekStart = calendar.date(from: calendar.dateComponents([.yearForWeekOfYear, .weekOfYear], from: today)),
+              let lastWeekStart = calendar.date(byAdding: .weekOfYear, value: -1, to: thisWeekStart) else {
+            return WeeklyComparison(currentWeekCompletions: 0, previousWeekCompletions: 0, changePercent: 0, isImprovement: false)
+        }
 
         var currentWeek = 0
         var previousWeek = 0
 
-        for completion in habit.completions {
+        for completion in habit.safeCompletions {
             if completion.date >= thisWeekStart {
                 currentWeek += 1
             } else if completion.date >= lastWeekStart && completion.date < thisWeekStart {

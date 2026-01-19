@@ -13,6 +13,7 @@ struct AddHabitView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.colorScheme) private var colorScheme
     @ObservedObject private var healthKitManager = HealthKitManager.shared
+    @ObservedObject private var themeManager = ThemeManager.shared
 
     // Step management
     @State private var currentStep = 0 // 0 = type selection, 1 = details
@@ -67,14 +68,14 @@ struct AddHabitView: View {
     }
 
     private var accentColor: Color {
-        Color(red: 0.65, green: 0.35, blue: 0.85)
+        themeManager.primaryColor
     }
 
     var body: some View {
         NavigationStack {
             ZStack {
                 // Floating clouds background
-                FloatingClouds(theme: .habitTracker(colorScheme))
+                FloatingClouds()
 
                 if currentStep == 0 {
                     habitTypeSelection
@@ -97,6 +98,8 @@ struct AddHabitView: View {
                             .font(.title2)
                             .foregroundStyle(tertiaryText)
                     }
+                    .accessibilityLabel(currentStep > 0 ? "Back" : "Close")
+                    .accessibilityHint(currentStep > 0 ? "Double tap to go back to habit type selection" : "Double tap to close without saving")
                 }
 
                 if currentStep == 1 {
@@ -109,6 +112,8 @@ struct AddHabitView: View {
                                 .foregroundStyle(canSave ? accentColor : tertiaryText)
                         }
                         .disabled(!canSave)
+                        .accessibilityLabel("Save habit")
+                        .accessibilityHint(canSave ? "Double tap to save this habit" : "Enter a name to save")
                     }
                 }
             }
@@ -437,7 +442,7 @@ struct AddHabitView: View {
         switch selectedHabitType {
         case .healthKitSleep: return 4...12
         case .healthKitWater: return 500...4000
-        case .healthKitCalories: return 100...3000
+        case .healthKitCalories: return 100...5000
         default: return 1...100
         }
     }
@@ -455,7 +460,7 @@ struct AddHabitView: View {
         switch selectedHabitType {
         case .healthKitSleep: return [6, 7, 8, 9]
         case .healthKitWater: return [1500, 2000, 2500, 3000]
-        case .healthKitCalories: return [500, 1000, 1500, 2000]
+        case .healthKitCalories: return [1500, 2000, 2500, 3000]
         default: return []
         }
     }

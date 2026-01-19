@@ -19,10 +19,18 @@ struct AppTheme {
         static let cardBackgroundLight = Color(hex: "#252142")
         static let surfaceBackground = Color(hex: "#13112A")
 
-        // Primary Accent (Purple-Pink)
-        static let accentPrimary = Color(hex: "#A855F7")
-        static let accentSecondary = Color(hex: "#EC4899")
+        // Primary Accent (Dynamic - reads from ThemeManager)
+        static var accentPrimary: Color {
+            ThemeManager.shared.primaryColor
+        }
+        static var accentSecondary: Color {
+            ThemeManager.shared.secondaryColor
+        }
         static let accentTertiary = Color(hex: "#06B6D4")
+
+        // Static fallback colors (for places that don't need dynamic theming)
+        static let defaultPurple = Color(hex: "#A855F7")
+        static let defaultPink = Color(hex: "#EC4899")
 
         // Text
         static let textPrimary = Color.white
@@ -35,8 +43,12 @@ struct AppTheme {
         static let error = Color(hex: "#F87171")
 
         // Glow Colors
-        static let glowPurple = Color(hex: "#A855F7").opacity(0.5)
-        static let glowPink = Color(hex: "#EC4899").opacity(0.5)
+        static var glowPurple: Color {
+            ThemeManager.shared.primaryColor.opacity(0.5)
+        }
+        static var glowPink: Color {
+            ThemeManager.shared.secondaryColor.opacity(0.5)
+        }
         static let glowCyan = Color(hex: "#06B6D4").opacity(0.5)
     }
 
@@ -62,24 +74,15 @@ struct AppTheme {
             endPoint: .bottomTrailing
         )
 
-        static let accentGradient = LinearGradient(
-            colors: [
-                Color(hex: "#A855F7"),
-                Color(hex: "#EC4899")
-            ],
-            startPoint: .topLeading,
-            endPoint: .bottomTrailing
-        )
+        // Dynamic accent gradient (uses ThemeManager)
+        static var accentGradient: LinearGradient {
+            ThemeManager.shared.primaryGradient
+        }
 
-        static let buttonGradient = LinearGradient(
-            colors: [
-                Color(hex: "#A855F7"),
-                Color(hex: "#EC4899"),
-                Color(hex: "#F472B6")
-            ],
-            startPoint: .leading,
-            endPoint: .trailing
-        )
+        // Dynamic button gradient (uses ThemeManager)
+        static var buttonGradient: LinearGradient {
+            ThemeManager.shared.buttonGradient
+        }
 
         static let cyanGradient = LinearGradient(
             colors: [
@@ -365,9 +368,9 @@ struct PrimaryButton: ViewModifier {
             .foregroundStyle(.white)
             .frame(maxWidth: .infinity)
             .frame(height: 56)
-            .background(AppTheme.Gradients.buttonGradient)
+            .background(ThemeManager.shared.buttonGradient)
             .clipShape(RoundedRectangle(cornerRadius: 16))
-            .shadow(color: AppTheme.Colors.accentPrimary.opacity(0.4), radius: 16, x: 0, y: 8)
+            .shadow(color: ThemeManager.shared.primaryColor.opacity(0.4), radius: 16, x: 0, y: 8)
     }
 }
 
@@ -403,20 +406,21 @@ extension View {
 
 struct AnimatedMeshBackground: View {
     @State private var animate = false
+    @ObservedObject private var themeManager = ThemeManager.shared
 
     var body: some View {
         ZStack {
             AppTheme.Colors.background
 
-            // Animated gradient blobs
+            // Animated gradient blobs (uses dynamic accent colors)
             Circle()
-                .fill(AppTheme.Colors.accentPrimary.opacity(0.15))
+                .fill(themeManager.primaryColor.opacity(0.15))
                 .frame(width: 300, height: 300)
                 .blur(radius: 60)
                 .offset(x: animate ? 50 : -50, y: animate ? -30 : 30)
 
             Circle()
-                .fill(AppTheme.Colors.accentSecondary.opacity(0.1))
+                .fill(themeManager.secondaryColor.opacity(0.1))
                 .frame(width: 250, height: 250)
                 .blur(radius: 50)
                 .offset(x: animate ? -70 : 70, y: animate ? 50 : -50)

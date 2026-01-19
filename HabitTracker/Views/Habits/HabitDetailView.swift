@@ -31,7 +31,7 @@ struct HabitDetailView: View {
     var body: some View {
         ZStack {
             // Floating clouds background
-            FloatingClouds(theme: .habitTracker(colorScheme))
+            FloatingClouds()
 
             ScrollView {
                 VStack(spacing: 24) {

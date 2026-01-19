@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct GoalSliderView: View {
+    @Environment(\.colorScheme) private var colorScheme
     @Binding var value: Double
     let range: ClosedRange<Double>
     let step: Double
@@ -30,9 +31,34 @@ struct GoalSliderView: View {
         self.color = color
     }
 
+    // Adaptive text colors
+    private var primaryTextColor: Color {
+        colorScheme == .dark ? .white : Color(red: 0.15, green: 0.1, blue: 0.25)
+    }
+
+    private var secondaryTextColor: Color {
+        colorScheme == .dark ? .white.opacity(0.7) : Color(red: 0.4, green: 0.35, blue: 0.5)
+    }
+
+    private var tertiaryTextColor: Color {
+        colorScheme == .dark ? .white.opacity(0.4) : Color(red: 0.55, green: 0.5, blue: 0.6)
+    }
+
+    private var trackBackgroundColor: Color {
+        colorScheme == .dark ? Color.white.opacity(0.1) : Color.black.opacity(0.1)
+    }
+
     private var progress: CGFloat {
         let normalized = (value - range.lowerBound) / (range.upperBound - range.lowerBound)
         return CGFloat(max(0, min(1, normalized)))
+    }
+
+    /// Returns the display unit (e.g., "L" instead of "ml" when showing liters)
+    private var displayUnit: String {
+        if unit == "ml" {
+            return "L"
+        }
+        return unit
     }
 
     var body: some View {
@@ -41,12 +67,12 @@ struct GoalSliderView: View {
             HStack(alignment: .firstTextBaseline, spacing: 4) {
                 Text(formattedValue)
                     .font(.system(size: 48, weight: .bold, design: .rounded))
-                    .foregroundStyle(AppTheme.Colors.textPrimary)
+                    .foregroundStyle(primaryTextColor)
                     .contentTransition(.numericText())
 
-                Text(unit)
+                Text(displayUnit)
                     .font(.title3.weight(.medium))
-                    .foregroundStyle(AppTheme.Colors.textSecondary)
+                    .foregroundStyle(secondaryTextColor)
             }
 
             // Custom slider track
@@ -57,7 +83,7 @@ struct GoalSliderView: View {
                 ZStack(alignment: .leading) {
                     // Background track
                     Capsule()
-                        .fill(Color.white.opacity(0.1))
+                        .fill(trackBackgroundColor)
                         .frame(height: 8)
 
                     // Filled track with gradient
@@ -109,19 +135,19 @@ struct GoalSliderView: View {
 
             // Range labels
             HStack {
-                Text(formatValueForUnit(range.lowerBound))
+                Text(formatRangeLabel(range.lowerBound))
                     .font(.caption)
-                    .foregroundStyle(AppTheme.Colors.textTertiary)
+                    .foregroundStyle(tertiaryTextColor)
 
                 Spacer()
 
-                Text(formatValueForUnit(range.upperBound))
+                Text(formatRangeLabel(range.upperBound))
                     .font(.caption)
-                    .foregroundStyle(AppTheme.Colors.textTertiary)
+                    .foregroundStyle(tertiaryTextColor)
             }
         }
         .padding(20)
-        .frostedCard(cornerRadius: 20)
+        .liquidGlass(cornerRadius: 20)
         .animation(.spring(response: 0.3, dampingFraction: 0.7), value: value)
     }
 
@@ -139,10 +165,7 @@ struct GoalSliderView: View {
             }
             return "\(hours)"
         case "ml":
-            if val >= 1000 {
-                return String(format: "%.1f", val / 1000)
-            }
-            return "\(Int(val))"
+            return String(format: "%.1f", val / 1000)
         case "kcal":
             return "\(Int(val))"
         default:
@@ -152,15 +175,38 @@ struct GoalSliderView: View {
             return String(format: "%.1f", val)
         }
     }
+
+    /// Format range label with unit suffix
+    private func formatRangeLabel(_ val: Double) -> String {
+        switch unit {
+        case "hours":
+            return "\(Int(val))h"
+        case "ml":
+            return String(format: "%.1fL", val / 1000)
+        case "kcal":
+            return "\(Int(val))"
+        default:
+            return "\(Int(val))"
+        }
+    }
 }
 
 // MARK: - Preset Goal Buttons
 
 struct GoalPresetButtons: View {
+    @Environment(\.colorScheme) private var colorScheme
     @Binding var value: Double
     let presets: [Double]
     let unit: String
     let color: Color
+
+    private var secondaryTextColor: Color {
+        colorScheme == .dark ? .white.opacity(0.7) : Color(red: 0.4, green: 0.35, blue: 0.5)
+    }
+
+    private var unselectedBackground: Color {
+        colorScheme == .dark ? Color.white.opacity(0.1) : Color.black.opacity(0.08)
+    }
 
     var body: some View {
         HStack(spacing: 12) {
@@ -173,12 +219,12 @@ struct GoalPresetButtons: View {
                 } label: {
                     Text(formatPreset(preset))
                         .font(.subheadline.weight(.medium))
-                        .foregroundStyle(value == preset ? .white : AppTheme.Colors.textSecondary)
+                        .foregroundStyle(value == preset ? .white : secondaryTextColor)
                         .padding(.horizontal, 16)
                         .padding(.vertical, 10)
                         .background(
                             Capsule()
-                                .fill(value == preset ? color : Color.white.opacity(0.1))
+                                .fill(value == preset ? color : unselectedBackground)
                         )
                 }
             }
@@ -190,10 +236,7 @@ struct GoalPresetButtons: View {
         case "hours":
             return "\(Int(val))h"
         case "ml":
-            if val >= 1000 {
-                return String(format: "%.1fL", val / 1000)
-            }
-            return "\(Int(val))ml"
+            return String(format: "%.1fL", val / 1000)
         case "kcal":
             return "\(Int(val))"
         default:

@@ -20,6 +20,7 @@ struct HomeView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.scenePhase) private var scenePhase
     @Environment(\.colorScheme) private var colorScheme
+    @Environment(\.isUsingLocalStorage) private var isUsingLocalStorage
     @Query(sort: \Habit.createdAt, order: .reverse) private var habits: [Habit]
     @Query(sort: \HabitStack.createdAt, order: .reverse) private var stacks: [HabitStack]
     @ObservedObject private var healthKitManager = HealthKitManager.shared
@@ -27,6 +28,7 @@ struct HomeView: View {
     @ObservedObject private var suggestionEngine = HabitSuggestionEngine.shared
     @ObservedObject private var stackManager = HabitStackManager.shared
     @ObservedObject private var focusManager = FocusSessionManager.shared
+    @ObservedObject private var themeManager = ThemeManager.shared
     @State private var showingAddHabit = false
     @State private var showingStacks = false
     @State private var showingCreateStack = false
@@ -39,31 +41,56 @@ struct HomeView: View {
     @State private var selectedSuggestion: HabitSuggestion?
     @State private var habitForFocus: Habit?
     @State private var showingCelebration = false
-    @State private var lastActiveDate: Date = Date()
+    @AppStorage("lastActiveDate") private var lastActiveDateTimestamp: Double = 0
     @State private var refreshID = UUID()
+    @State private var syncError: String?
+    @State private var showingSyncError = false
+    @State private var showingLocalStorageBanner = false
 
-    // Top section colors based on color scheme
+    // Helper to get Date from persisted timestamp
+    private var lastActiveDate: Date {
+        Date(timeIntervalSince1970: lastActiveDateTimestamp)
+    }
+
+    private func updateLastActiveDate() {
+        lastActiveDateTimestamp = Date().timeIntervalSince1970
+    }
+
+    // Top section colors based on color scheme and accent color
     private var topSectionGradient: LinearGradient {
+        let (r, g, b) = themeManager.accentColor.rgbComponents
+
         if colorScheme == .dark {
-            // Dark mode: deep purple gradient
+            // Dark mode: deep gradient tinted with accent color
             return LinearGradient(
                 colors: [
-                    Color(red: 0.18, green: 0.14, blue: 0.28),
-                    Color(red: 0.15, green: 0.12, blue: 0.25)
+                    Color(red: r * 0.18, green: g * 0.14, blue: b * 0.28),
+                    Color(red: r * 0.12, green: g * 0.10, blue: b * 0.22)
                 ],
                 startPoint: .top,
                 endPoint: .bottom
             )
         } else {
-            // Light mode: soft lavender gradient
+            // Light mode: soft gradient tinted with accent
             return LinearGradient(
                 colors: [
-                    Color(red: 0.96, green: 0.94, blue: 0.98),
-                    Color(red: 0.94, green: 0.92, blue: 0.97)
+                    Color(red: 0.94 + r * 0.04, green: 0.92 + g * 0.04, blue: 0.96 + b * 0.03),
+                    Color(red: 0.92 + r * 0.04, green: 0.90 + g * 0.04, blue: 0.95 + b * 0.03)
                 ],
                 startPoint: .top,
                 endPoint: .bottom
             )
+        }
+    }
+
+    // Top color of the section (for safe area fill)
+    private var topSectionTopColor: Color {
+        let (r, g, b) = themeManager.accentColor.rgbComponents
+
+        if colorScheme == .dark {
+            return Color(red: r * 0.18, green: g * 0.14, blue: b * 0.28)
+        } else {
+            return Color(red: 0.94 + r * 0.04, green: 0.92 + g * 0.04, blue: 0.96 + b * 0.03)
         }
     }
 
@@ -110,18 +137,11 @@ struct HomeView: View {
                     .font(.body.weight(.semibold))
                     .foregroundStyle(.white)
                     .frame(width: 36, height: 36)
-                    .background(
-                        LinearGradient(
-                            colors: [
-                                Color(red: 0.65, green: 0.35, blue: 0.85),
-                                Color(red: 0.85, green: 0.35, blue: 0.65)
-                            ],
-                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing
-                        )
-                    )
+                    .background(themeManager.primaryGradient)
                     .clipShape(Circle())
             }
+            .accessibilityLabel("Add new habit")
+            .accessibilityHint("Double tap to create a new habit")
         }
     }
 
@@ -139,7 +159,7 @@ struct HomeView: View {
         NavigationStack {
             ZStack {
                 // Layer 1: Floating clouds background (full screen)
-                FloatingClouds(theme: .habitTracker(colorScheme))
+                FloatingClouds()
 
                 // Layer 2: Scrollable habits (below top section)
                 ScrollView {
@@ -163,9 +183,7 @@ struct HomeView: View {
                 VStack(spacing: 0) {
                     ZStack(alignment: .top) {
                         // Safe area fill (not clipped by wave) - use solid color matching gradient top
-                        (colorScheme == .dark
-                            ? Color(red: 0.18, green: 0.14, blue: 0.28)
-                            : Color(red: 0.96, green: 0.94, blue: 0.98))
+                        topSectionTopColor
                             .frame(height: 80) // Just the safe area height
                             .ignoresSafeArea(edges: .top)
 
@@ -249,26 +267,40 @@ struct HomeView: View {
             }
             .onChange(of: scenePhase) { _, newPhase in
                 if newPhase == .active {
-                    // Check if we've crossed into a new day since last active
                     let calendar = Calendar.current
-                    if !calendar.isDate(lastActiveDate, inSameDayAs: Date()) {
+                    let now = Date()
+
+                    // Check if we've crossed into a new day since last active
+                    if !calendar.isDate(lastActiveDate, inSameDayAs: now) {
                         // Day changed - force UI refresh
                         refreshID = UUID()
-                        lastActiveDate = Date()
                     }
+
+                    // Always update last active timestamp
+                    updateLastActiveDate()
 
                     // Sync HealthKit habits when app becomes active
                     Task {
                         await syncHealthKitHabits()
                     }
-                    // Update widgets
+                    // Update widgets with fresh data
                     WidgetDataManager.shared.updateWidgetData(habits: habits)
                     // Update Apple Watch
                     WatchConnectivityManager.shared.sendHabitsToWatch(Array(habits))
                 }
             }
             .onAppear {
-                // Initial sync
+                let calendar = Calendar.current
+                let now = Date()
+
+                // CRITICAL: Check if we're on a new day (handles fresh launch after termination)
+                if lastActiveDateTimestamp == 0 || !calendar.isDate(lastActiveDate, inSameDayAs: now) {
+                    // Force UI to re-compute all habit completion states
+                    refreshID = UUID()
+                    updateLastActiveDate()
+                }
+
+                // Initial sync with fresh computed values
                 WidgetDataManager.shared.updateWidgetData(habits: habits)
                 // Initial Watch sync
                 WatchConnectivityManager.shared.sendHabitsToWatch(Array(habits))
@@ -295,6 +327,100 @@ struct HomeView: View {
                         .ignoresSafeArea()
                 }
             }
+            .overlay(alignment: .top) {
+                VStack(spacing: 8) {
+                    if showingLocalStorageBanner {
+                        LocalStorageBanner {
+                            withAnimation {
+                                showingLocalStorageBanner = false
+                            }
+                        }
+                        .transition(.move(edge: .top).combined(with: .opacity))
+                    }
+
+                    if showingSyncError, let error = syncError {
+                        SyncErrorBanner(message: error) {
+                            withAnimation {
+                                showingSyncError = false
+                            }
+                        }
+                        .transition(.move(edge: .top).combined(with: .opacity))
+                    }
+                }
+                .padding(.top, 60)
+            }
+            .onAppear {
+                // Show local storage banner if CloudKit failed
+                if isUsingLocalStorage && !UserDefaults.standard.bool(forKey: "dismissedLocalStorageBanner") {
+                    showingLocalStorageBanner = true
+                }
+            }
+        }
+    }
+
+    // MARK: - Local Storage Banner
+
+    private struct LocalStorageBanner: View {
+        let onDismiss: () -> Void
+
+        var body: some View {
+            HStack(spacing: 12) {
+                Image(systemName: "icloud.slash")
+                    .foregroundStyle(.orange)
+
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("Offline Mode")
+                        .font(.subheadline.weight(.medium))
+                    Text("Data is saved locally only")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+
+                Spacer()
+
+                Button {
+                    UserDefaults.standard.set(true, forKey: "dismissedLocalStorageBanner")
+                    onDismiss()
+                } label: {
+                    Image(systemName: "xmark.circle.fill")
+                        .foregroundStyle(.secondary)
+                }
+            }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 12)
+            .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 12))
+            .padding(.horizontal)
+        }
+    }
+
+    // MARK: - Sync Error Banner
+
+    private struct SyncErrorBanner: View {
+        let message: String
+        let onDismiss: () -> Void
+
+        var body: some View {
+            HStack(spacing: 12) {
+                Image(systemName: "exclamationmark.icloud")
+                    .foregroundStyle(.orange)
+
+                Text(message)
+                    .font(.subheadline)
+                    .foregroundStyle(.primary)
+
+                Spacer()
+
+                Button(action: onDismiss) {
+                    Image(systemName: "xmark.circle.fill")
+                        .foregroundStyle(.secondary)
+                }
+            }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 12)
+            .background(.ultraThinMaterial)
+            .clipShape(RoundedRectangle(cornerRadius: 12))
+            .shadow(color: .black.opacity(0.1), radius: 8, y: 4)
+            .padding(.horizontal, 16)
         }
     }
 
@@ -302,6 +428,7 @@ struct HomeView: View {
 
     private func syncHealthKitHabits() async {
         let healthKitHabits = habits.filter { $0.dataSource == .healthKit }
+        var syncFailed = false
 
         for habit in healthKitHabits {
             do {
@@ -310,8 +437,35 @@ struct HomeView: View {
                         updateOrCreateCompletion(for: habit, value: value)
                     }
                 }
-            } catch {
-                print("Failed to sync \(habit.name): \(error)")
+            } catch let error as NSError {
+                // Error code 11 = "No data available" - this is expected when no health data exists
+                // Don't treat it as a sync failure
+                if error.domain == "com.apple.healthkit" && error.code == 11 {
+                    #if DEBUG
+                    print("\(habit.name): No health data available for today (this is normal)")
+                    #endif
+                } else {
+                    syncFailed = true
+                    #if DEBUG
+                    print("Failed to sync \(habit.name): \(error)")
+                    #endif
+                }
+            }
+        }
+
+        // Show error banner if any sync failed
+        if syncFailed {
+            await MainActor.run {
+                syncError = "Some health data couldn't sync"
+                withAnimation {
+                    showingSyncError = true
+                }
+                // Auto-dismiss after 5 seconds
+                DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
+                    withAnimation {
+                        showingSyncError = false
+                    }
+                }
             }
         }
     }
@@ -319,7 +473,7 @@ struct HomeView: View {
     private func updateOrCreateCompletion(for habit: Habit, value: Double) {
         let calendar = Calendar.current
 
-        if let existing = habit.completions.first(where: { calendar.isDateInToday($0.date) }) {
+        if let existing = habit.safeCompletions.first(where: { calendar.isDateInToday($0.date) }) {
             existing.value = value
             existing.isAutoSynced = true
         } else {
@@ -337,7 +491,7 @@ struct HomeView: View {
         HapticManager.shared.habitDeleted()
         withAnimation {
             // Delete all completions first
-            for completion in habit.completions {
+            for completion in habit.safeCompletions {
                 modelContext.delete(completion)
             }
             // Delete the habit

@@ -17,6 +17,8 @@ class StoreManager: ObservableObject {
     @Published var purchasedProductIDs: Set<String> = []
     @Published var isLoading = false
     @Published var isPremium = false
+    @Published var errorMessage: String?
+    @Published var showError = false
 
     private let productIDs: Set<String> = [
         "habittracker.premium.monthly",
@@ -50,7 +52,9 @@ class StoreManager: ObservableObject {
             products = try await Product.products(for: productIDs)
                 .sorted { $0.price < $1.price }
         } catch {
+            #if DEBUG
             print("Failed to load products: \(error)")
+            #endif
         }
     }
 
@@ -94,7 +98,13 @@ class StoreManager: ObservableObject {
                     await self.updatePurchasedProducts()
                     await transaction.finish()
                 } catch {
+                    #if DEBUG
                     print("Transaction failed verification: \(error)")
+                    #endif
+                    await MainActor.run {
+                        self.errorMessage = "Transaction could not be verified. Please try again or contact support."
+                        self.showError = true
+                    }
                 }
             }
         }
@@ -113,7 +123,11 @@ class StoreManager: ObservableObject {
                     purchased.insert(transaction.productID)
                 }
             } catch {
+                #if DEBUG
                 print("Failed to verify transaction: \(error)")
+                #endif
+                // Note: Don't show error here as this runs on startup
+                // and may fail for valid reasons (e.g., no purchases yet)
             }
         }
 
@@ -148,6 +162,13 @@ class StoreManager: ObservableObject {
 
     func canAddMoreHabits(currentCount: Int) -> Bool {
         return isPremium || currentCount < Self.maxFreeHabits
+    }
+
+    // MARK: - Error Handling
+
+    func dismissError() {
+        errorMessage = nil
+        showError = false
     }
 
     // MARK: - Debug (Development Only)

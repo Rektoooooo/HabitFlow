@@ -30,7 +30,7 @@ struct WeeklyInsightsView: View {
         // Look at the last 12 weeks for meaningful data
         let twelveWeeksAgo = calendar.date(byAdding: .weekOfYear, value: -12, to: Date()) ?? Date()
 
-        for completion in habit.completions {
+        for completion in habit.safeCompletions {
             if completion.date >= twelveWeeksAgo {
                 let weekday = calendar.component(.weekday, from: completion.date)
                 // Convert Sunday=1...Saturday=7 to Monday=1...Sunday=7

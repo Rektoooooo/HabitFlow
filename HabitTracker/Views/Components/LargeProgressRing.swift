@@ -372,17 +372,18 @@ struct WhiteCategoryRow: View {
 
 struct WhiteProgressRing: View {
     @Environment(\.colorScheme) private var colorScheme
+    @ObservedObject private var themeManager = ThemeManager.shared
     let progress: Double
     let completed: Int
     let total: Int
 
-    // Purple to pink gradient colors
+    // Dynamic gradient colors based on theme
     private var progressGradient: AngularGradient {
         AngularGradient(
             gradient: Gradient(colors: [
-                Color(red: 0.65, green: 0.35, blue: 0.85),  // Purple
-                Color(red: 0.85, green: 0.35, blue: 0.65),  // Pink
-                Color(red: 0.65, green: 0.35, blue: 0.85)   // Back to purple
+                themeManager.primaryColor,
+                themeManager.secondaryColor,
+                themeManager.primaryColor
             ]),
             center: .center,
             startAngle: .degrees(-90),
@@ -405,8 +406,8 @@ struct WhiteProgressRing: View {
                 .stroke(
                     LinearGradient(
                         colors: [
-                            Color(red: 0.65, green: 0.35, blue: 0.85).opacity(0.6),
-                            Color(red: 0.85, green: 0.35, blue: 0.65).opacity(0.6)
+                            themeManager.primaryColor.opacity(0.6),
+                            themeManager.secondaryColor.opacity(0.6)
                         ],
                         startPoint: .topLeading,
                         endPoint: .bottomTrailing

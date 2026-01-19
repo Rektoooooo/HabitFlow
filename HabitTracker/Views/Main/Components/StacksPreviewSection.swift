@@ -9,6 +9,7 @@ import SwiftUI
 
 struct StacksPreviewSection: View {
     @Environment(\.colorScheme) private var colorScheme
+    @ObservedObject private var themeManager = ThemeManager.shared
     let stacks: [HabitStack]
     let habits: [Habit]
     let onShowStacks: () -> Void
@@ -41,7 +42,7 @@ struct StacksPreviewSection: View {
                 } label: {
                     Text("See all")
                         .font(.caption.weight(.medium))
-                        .foregroundStyle(Color(hex: "#8B5CF6"))
+                        .foregroundStyle(themeManager.primaryColor)
                 }
             }
 
@@ -75,6 +76,6 @@ struct StacksPreviewSection: View {
                 }
             }
         }
-        .padding(.vertical, 8)
+        .padding(.top, 8)
     }
 }

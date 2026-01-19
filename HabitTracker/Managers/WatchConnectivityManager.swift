@@ -33,7 +33,9 @@ class WatchConnectivityManager: NSObject, ObservableObject {
 
     private func setupWatchConnectivity() {
         guard WCSession.isSupported() else {
+            #if DEBUG
             print("WatchConnectivity not supported on this device")
+            #endif
             return
         }
 
@@ -51,7 +53,22 @@ class WatchConnectivityManager: NSObject, ObservableObject {
 
     func sendHabitsToWatch(_ habits: [Habit]) {
         guard let session = session, session.activationState == .activated else {
+            #if DEBUG
             print("WCSession not activated")
+            #endif
+            return
+        }
+
+        // Don't spam sync attempts if no Watch is paired
+        guard session.isPaired else {
+            return
+        }
+
+        // Only sync if Watch app is installed
+        guard session.isWatchAppInstalled else {
+            #if DEBUG
+            print("Watch app not installed, skipping sync")
+            #endif
             return
         }
 
@@ -69,7 +86,9 @@ class WatchConnectivityManager: NSObject, ObservableObject {
 
         // Encode to JSON
         guard let data = try? JSONEncoder().encode(watchHabits) else {
+            #if DEBUG
             print("Failed to encode habits for Watch")
+            #endif
             return
         }
 
@@ -88,19 +107,27 @@ class WatchConnectivityManager: NSObject, ObservableObject {
         // Use application context for reliable sync (works better in simulator)
         do {
             try session.updateApplicationContext(userInfo)
+            #if DEBUG
             print("Updated application context with \(watchHabits.count) habits")
+            #endif
         } catch {
+            #if DEBUG
             print("Failed to update application context: \(error.localizedDescription)")
+            #endif
         }
 
         // Also use transferUserInfo for queued delivery
         session.transferUserInfo(userInfo)
+        #if DEBUG
         print("Sent \(watchHabits.count) habits to Watch")
+        #endif
 
         // If reachable, also send immediate message for faster update
         if session.isReachable {
             session.sendMessage(userInfo, replyHandler: nil) { error in
+                #if DEBUG
                 print("Failed to send immediate message: \(error.localizedDescription)")
+                #endif
             }
         }
     }
@@ -109,7 +136,9 @@ class WatchConnectivityManager: NSObject, ObservableObject {
 
     private func handleCompletionFromWatch(habitId: UUID, completed: Bool) {
         guard let context = modelContext else {
+            #if DEBUG
             print("No model context available")
+            #endif
             return
         }
 
@@ -120,7 +149,9 @@ class WatchConnectivityManager: NSObject, ObservableObject {
                 )
 
                 guard let habit = try context.fetch(descriptor).first else {
+                    #if DEBUG
                     print("Habit not found: \(habitId)")
+                    #endif
                     return
                 }
 
@@ -130,14 +161,15 @@ class WatchConnectivityManager: NSObject, ObservableObject {
                     // Add completion if not already completed
                     if !habit.isCompletedToday {
                         let completion = HabitCompletion(date: Date(), habit: habit)
-                        habit.completions.append(completion)
+                        if habit.completions == nil { habit.completions = [] }
+                        habit.completions?.append(completion)
                         context.insert(completion)
                         HapticManager.shared.habitCompleted()
                     }
                 } else {
                     // Remove today's completion
-                    if let todayCompletion = habit.completions.first(where: { calendar.isDateInToday($0.date) }) {
-                        habit.completions.removeAll { $0.id == todayCompletion.id }
+                    if let todayCompletion = habit.safeCompletions.first(where: { calendar.isDateInToday($0.date) }) {
+                        habit.completions?.removeAll { $0.id == todayCompletion.id }
                         context.delete(todayCompletion)
                     }
                 }
@@ -147,10 +179,14 @@ class WatchConnectivityManager: NSObject, ObservableObject {
                 // Notify widgets and sync back to Watch
                 NotificationCenter.default.post(name: .habitsDidChange, object: nil)
 
+                #if DEBUG
                 print("Processed completion from Watch for habit: \(habit.name)")
+                #endif
 
             } catch {
+                #if DEBUG
                 print("Failed to handle completion from Watch: \(error)")
+                #endif
             }
         }
     }
@@ -162,23 +198,30 @@ extension WatchConnectivityManager: WCSessionDelegate {
 
     nonisolated func session(_ session: WCSession, activationDidCompleteWith activationState: WCSessionActivationState, error: Error?) {
         Task { @MainActor in
+            #if DEBUG
             if let error = error {
                 print("WCSession activation failed: \(error.localizedDescription)")
                 return
             }
-
             print("WCSession activated with state: \(activationState.rawValue)")
+            #else
+            if error != nil { return }
+            #endif
             isWatchAppInstalled = session.isWatchAppInstalled
             isReachable = session.isReachable
         }
     }
 
     nonisolated func sessionDidBecomeInactive(_ session: WCSession) {
+        #if DEBUG
         print("WCSession became inactive")
+        #endif
     }
 
     nonisolated func sessionDidDeactivate(_ session: WCSession) {
+        #if DEBUG
         print("WCSession deactivated")
+        #endif
         // Reactivate for switching watches
         session.activate()
     }
@@ -186,14 +229,18 @@ extension WatchConnectivityManager: WCSessionDelegate {
     nonisolated func sessionReachabilityDidChange(_ session: WCSession) {
         Task { @MainActor in
             isReachable = session.isReachable
+            #if DEBUG
             print("Watch reachability changed: \(session.isReachable)")
+            #endif
         }
     }
 
     nonisolated func sessionWatchStateDidChange(_ session: WCSession) {
         Task { @MainActor in
             isWatchAppInstalled = session.isWatchAppInstalled
+            #if DEBUG
             print("Watch app installed: \(session.isWatchAppInstalled)")
+            #endif
         }
     }
 
@@ -212,11 +259,15 @@ extension WatchConnectivityManager: WCSessionDelegate {
 
             case "requestSync":
                 // Watch is requesting fresh data
+                #if DEBUG
                 print("Watch requested sync")
+                #endif
                 NotificationCenter.default.post(name: .watchRequestedSync, object: nil)
 
             default:
+                #if DEBUG
                 print("Unknown message type from Watch: \(type)")
+                #endif
             }
         }
     }
@@ -235,7 +286,9 @@ extension WatchConnectivityManager: WCSessionDelegate {
                 }
 
             default:
+                #if DEBUG
                 print("Unknown userInfo type from Watch: \(type)")
+                #endif
             }
         }
     }

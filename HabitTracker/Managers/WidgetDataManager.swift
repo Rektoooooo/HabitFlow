@@ -14,6 +14,7 @@ class WidgetDataManager {
 
     private let suiteName = "group.ic-servis.com.HabitTracker"
     private let habitsKey = "widgetHabits"
+    private let habitsContainerKey = "widgetHabitsContainer"
     private let historyKey = "widgetHabitHistory"
 
     private init() {}
@@ -21,7 +22,9 @@ class WidgetDataManager {
     /// Updates widget data with current habits
     func updateWidgetData(habits: [Habit]) {
         guard let defaults = UserDefaults(suiteName: suiteName) else {
+            #if DEBUG
             print("Failed to access App Group UserDefaults")
+            #endif
             return
         }
 
@@ -41,6 +44,12 @@ class WidgetDataManager {
             defaults.set(encoded, forKey: habitsKey)
         }
 
+        // Save container with timestamp for day-change detection
+        let container = WidgetDataContainer(habits: widgetData, lastUpdatedDate: Date())
+        if let containerEncoded = try? JSONEncoder().encode(container) {
+            defaults.set(containerEncoded, forKey: habitsContainerKey)
+        }
+
         // Save history data for history widget (with completion dates)
         let historyData = habits.map { habit in
             WidgetHabitHistoryData(
@@ -48,7 +57,7 @@ class WidgetDataManager {
                 name: habit.name,
                 icon: habit.icon,
                 color: habit.color,
-                completionDates: habit.completions.map { $0.date },
+                completionDates: habit.safeCompletions.map { $0.date },
                 currentStreak: habit.currentStreak
             )
         }
@@ -80,6 +89,17 @@ struct WidgetHabitData: Codable {
     let color: String
     let isCompletedToday: Bool
     let currentStreak: Int
+}
+
+/// Container that wraps habit data with a timestamp for freshness checking
+struct WidgetDataContainer: Codable {
+    let habits: [WidgetHabitData]
+    let lastUpdatedDate: Date
+
+    /// Check if the data is from today
+    var isFromToday: Bool {
+        Calendar.current.isDateInToday(lastUpdatedDate)
+    }
 }
 
 /// Data structure for habit history widget (must match widget extension)

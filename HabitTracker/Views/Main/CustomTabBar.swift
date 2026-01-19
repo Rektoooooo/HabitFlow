@@ -78,6 +78,9 @@ struct TabBarButton: View {
             .frame(width: 60)
         }
         .buttonStyle(.plain)
+        .accessibilityLabel(title)
+        .accessibilityHint("Double tap to switch to \(title)")
+        .accessibilityAddTraits(isSelected ? .isSelected : [])
     }
 }
 
@@ -111,6 +114,8 @@ struct CenterAddButton: View {
             .scaleEffect(isPressed ? 0.9 : 1.0)
         }
         .buttonStyle(.plain)
+        .accessibilityLabel("Add new habit")
+        .accessibilityHint("Double tap to create a new habit")
         .pressEvents {
             withAnimation(.spring(response: 0.2, dampingFraction: 0.6)) {
                 isPressed = true

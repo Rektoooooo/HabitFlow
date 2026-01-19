@@ -67,6 +67,9 @@ struct HabitTypeCard: View {
             .shadow(color: color.opacity(0.15), radius: 8, x: 0, y: 4)
         }
         .buttonStyle(.plain)
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("\(title), \(subtitle)")
+        .accessibilityHint("Double tap to select this habit type")
     }
 }
 
@@ -114,6 +117,10 @@ struct DataSourceButton: View {
         .buttonStyle(.plain)
         .disabled(!isEnabled)
         .opacity(isEnabled ? 1 : 0.5)
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("\(title), \(subtitle)")
+        .accessibilityHint(isEnabled ? "Double tap to select" : "Not available")
+        .accessibilityAddTraits(isSelected ? .isSelected : [])
     }
 }
 
@@ -145,5 +152,8 @@ struct GoalProgressionPill: View {
             )
         }
         .buttonStyle(.plain)
+        .accessibilityLabel(progression.displayName)
+        .accessibilityHint("Double tap to select this goal progression type")
+        .accessibilityAddTraits(isSelected ? .isSelected : [])
     }
 }

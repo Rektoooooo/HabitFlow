@@ -108,7 +108,7 @@ struct CalendarView: View {
 
     private var calendarGrid: some View {
         let days = generateDaysForMonth()
-        let completedDates = Set(habit.completions.map { calendar.startOfDay(for: $0.date) })
+        let completedDates = Set(habit.safeCompletions.map { calendar.startOfDay(for: $0.date) })
 
         return LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 7), spacing: 8) {
             ForEach(days, id: \.self) { date in
@@ -163,7 +163,7 @@ struct CalendarView: View {
 
             if isCurrentlyCompleted {
                 // Remove completion for this date
-                if let completion = habit.completions.first(where: {
+                if let completion = habit.safeCompletions.first(where: {
                     calendar.isDate($0.date, inSameDayAs: targetDate)
                 }) {
                     modelContext.delete(completion)

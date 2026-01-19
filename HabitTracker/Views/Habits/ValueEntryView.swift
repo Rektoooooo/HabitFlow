@@ -12,6 +12,7 @@ struct ValueEntryView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
     @Environment(\.colorScheme) private var colorScheme
+    @ObservedObject private var themeManager = ThemeManager.shared
 
     let habit: Habit
 
@@ -32,14 +33,14 @@ struct ValueEntryView: View {
     }
 
     private var accentColor: Color {
-        Color(red: 0.65, green: 0.35, blue: 0.85)
+        themeManager.primaryColor
     }
 
     var body: some View {
         NavigationStack {
             ZStack {
                 // Floating clouds background
-                FloatingClouds(theme: .habitTracker(colorScheme))
+                FloatingClouds()
 
                 VStack(spacing: 32) {
                     Spacer()
@@ -220,10 +221,7 @@ struct ValueEntryView: View {
     private func formatGoalValue(_ goal: Double) -> String {
         switch habit.unit {
         case "ml":
-            if goal >= 1000 {
-                return String(format: "%.1fL", goal / 1000)
-            }
-            return "\(Int(goal))ml"
+            return String(format: "%.1fL", goal / 1000)
         case "kcal":
             return "\(Int(goal)) kcal"
         case "hours":
@@ -242,7 +240,7 @@ struct ValueEntryView: View {
         let calendar = Calendar.current
 
         // Update existing completion or create new one
-        if let existing = habit.completions.first(where: { calendar.isDateInToday($0.date) }) {
+        if let existing = habit.safeCompletions.first(where: { calendar.isDateInToday($0.date) }) {
             existing.value = value
             existing.isAutoSynced = false
         } else {
@@ -287,7 +285,7 @@ struct QuickAddButton: View {
     private var formattedValue: String {
         switch unit {
         case "ml":
-            return "\(Int(value))ml"
+            return String(format: "%.0fml", value)
         case "kcal":
             return "\(Int(value))"
         case "hours":

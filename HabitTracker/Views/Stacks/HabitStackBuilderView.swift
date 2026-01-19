@@ -12,6 +12,7 @@ struct HabitStackBuilderView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
     @Environment(\.colorScheme) private var colorScheme
+    @ObservedObject private var themeManager = ThemeManager.shared
 
     @Query(sort: \Habit.createdAt, order: .reverse) private var allHabits: [Habit]
 
@@ -37,7 +38,7 @@ struct HabitStackBuilderView: View {
     }
 
     private var accentColor: Color {
-        Color(red: 0.65, green: 0.35, blue: 0.85)
+        themeManager.primaryColor
     }
 
     let icons = [
@@ -67,7 +68,7 @@ struct HabitStackBuilderView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                FloatingClouds(theme: .habitTracker(colorScheme))
+                FloatingClouds()
 
                 if currentStep == 0 {
                     habitSelectionStep
@@ -75,7 +76,7 @@ struct HabitStackBuilderView: View {
                     customizeStep
                 }
             }
-            .navigationTitle(existingStack == nil ? "New Stack" : "Edit Stack")
+            .navigationTitle(existingStack == nil ? "New Chain" : "Edit Chain")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
@@ -368,7 +369,7 @@ struct HabitStackBuilderView: View {
                     .foregroundStyle(Color(hex: selectedColor))
             }
 
-            Text(stackName.isEmpty ? "Stack Name" : stackName)
+            Text(stackName.isEmpty ? "Chain Name" : stackName)
                 .font(.title3.weight(.semibold))
                 .foregroundStyle(stackName.isEmpty ? tertiaryText : primaryText)
 
@@ -677,7 +678,7 @@ struct HabitSelectionRow: View {
                         .foregroundStyle(primaryText)
 
                     if habit.stackId != nil && !isSelected {
-                        Text("Already in another stack")
+                        Text("Already in another chain")
                             .font(.caption2)
                             .foregroundStyle(.orange)
                     }

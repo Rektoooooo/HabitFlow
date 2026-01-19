@@ -172,7 +172,8 @@ class FocusSessionManager: ObservableObject {
 
         // Create completion
         let completion = HabitCompletion(date: Date(), habit: habit)
-        habit.completions.append(completion)
+        if habit.completions == nil { habit.completions = [] }
+        habit.completions?.append(completion)
         context.insert(completion)
 
         try? context.save()
@@ -286,9 +287,11 @@ class FocusSessionManager: ObservableObject {
         )
 
         UNUserNotificationCenter.current().add(request) { error in
+            #if DEBUG
             if let error = error {
                 print("Failed to schedule focus notification: \(error)")
             }
+            #endif
         }
     }
 

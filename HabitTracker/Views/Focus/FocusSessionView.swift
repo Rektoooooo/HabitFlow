@@ -193,6 +193,8 @@ struct FocusSessionView: View {
                 }
             }
             .opacity(manager.state == .completed ? 0 : 1)
+            .accessibilityLabel("End session")
+            .accessibilityHint("Double tap to end the focus session without completing")
 
             // Play/Pause button
             Button {
@@ -217,12 +219,33 @@ struct FocusSessionView: View {
             }
             .scaleEffect(manager.state == .completed ? 1.1 : 1.0)
             .animation(.spring(response: 0.3, dampingFraction: 0.6), value: manager.state)
+            .accessibilityLabel(playPauseAccessibilityLabel)
+            .accessibilityHint(playPauseAccessibilityHint)
 
             // Skip to complete (hidden placeholder for alignment)
             Circle()
                 .fill(Color.clear)
                 .frame(width: 64, height: 64)
                 .opacity(0)
+                .accessibilityHidden(true)
+        }
+    }
+
+    private var playPauseAccessibilityLabel: String {
+        switch manager.state {
+        case .idle: return "Start"
+        case .running: return "Pause"
+        case .paused: return "Resume"
+        case .completed: return "Done"
+        }
+    }
+
+    private var playPauseAccessibilityHint: String {
+        switch manager.state {
+        case .idle: return "Double tap to start the focus session"
+        case .running: return "Double tap to pause the timer"
+        case .paused: return "Double tap to resume the timer"
+        case .completed: return "Double tap to close"
         }
     }
 
@@ -318,7 +341,7 @@ struct FocusSetupSheet: View {
     var body: some View {
         ZStack {
             // Background with floating clouds
-            FloatingClouds(theme: .habitTracker(colorScheme))
+            FloatingClouds()
 
             VStack(spacing: 0) {
                 // Custom header
@@ -619,6 +642,8 @@ struct FloatingFocusButton: View {
                         .shadow(color: .black.opacity(0.2), radius: 8, x: 0, y: 4)
                 )
             }
+            .accessibilityLabel("Focus session in progress, \(manager.formattedTime) remaining")
+            .accessibilityHint("Double tap to open the focus timer")
         }
     }
 }

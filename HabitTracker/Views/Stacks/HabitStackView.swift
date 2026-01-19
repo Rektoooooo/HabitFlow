@@ -32,7 +32,7 @@ struct StacksView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                FloatingClouds(theme: .habitTracker(colorScheme))
+                FloatingClouds()
 
                 ScrollView {
                     VStack(spacing: 20) {
@@ -57,7 +57,7 @@ struct StacksView: View {
                     .padding(.bottom, 60)
                 }
             }
-            .navigationTitle("Habit Stacks")
+            .navigationTitle("Habit Chains")
             .navigationBarTitleDisplayMode(.large)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
@@ -95,7 +95,7 @@ struct StacksView: View {
                     .foregroundStyle(Color(hex: "#A855F7"))
             }
 
-            Text("No Habit Stacks Yet")
+            Text("No Habit Chains Yet")
                 .font(.title3.weight(.bold))
                 .foregroundStyle(primaryText)
 
@@ -109,7 +109,7 @@ struct StacksView: View {
             } label: {
                 HStack {
                     Image(systemName: "plus.circle.fill")
-                    Text("Create Your First Stack")
+                    Text("Create Your First Chain")
                 }
                 .font(.headline)
                 .foregroundStyle(.white)
@@ -127,7 +127,7 @@ struct StacksView: View {
 
     private var templatesSection: some View {
         VStack(alignment: .leading, spacing: 16) {
-            Text("Stack Templates")
+            Text("Chain Templates")
                 .font(.headline)
                 .foregroundStyle(primaryText)
 
@@ -243,13 +243,13 @@ struct StackCard: View {
             Button {
                 onEdit()
             } label: {
-                Label("Edit Stack", systemImage: "pencil")
+                Label("Edit Chain", systemImage: "pencil")
             }
 
             Button(role: .destructive) {
                 deleteStack()
             } label: {
-                Label("Delete Stack", systemImage: "trash")
+                Label("Delete Chain", systemImage: "trash")
             }
         }
     }
@@ -345,7 +345,8 @@ struct StackCard: View {
     private func completeHabit(_ habit: Habit) {
         // Add completion for today
         let completion = HabitCompletion(date: Date(), value: 1)
-        habit.completions.append(completion)
+        if habit.completions == nil { habit.completions = [] }
+        habit.completions?.append(completion)
         HapticManager.shared.habitCompleted()
     }
 
