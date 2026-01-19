@@ -46,6 +46,8 @@ struct HomeView: View {
     @State private var syncError: String?
     @State private var showingSyncError = false
     @State private var showingLocalStorageBanner = false
+    @AppStorage("dismissedWidgetPromo") private var dismissedWidgetPromo = false
+    @State private var showingWidgetPromo = false
 
     // Helper to get Date from persisted timestamp
     private var lastActiveDate: Date {
@@ -264,6 +266,13 @@ struct HomeView: View {
                 WatchConnectivityManager.shared.sendHabitsToWatch(newHabits)
                 // Refresh suggestions when habits change
                 refreshSuggestions()
+
+                // Show widget promo when user adds their first habit
+                if !dismissedWidgetPromo && newHabits.count == 1 && !showingWidgetPromo {
+                    withAnimation(.spring(response: 0.5, dampingFraction: 0.8).delay(0.3)) {
+                        showingWidgetPromo = true
+                    }
+                }
             }
             .onChange(of: scenePhase) { _, newPhase in
                 if newPhase == .active {
@@ -306,6 +315,13 @@ struct HomeView: View {
                 WatchConnectivityManager.shared.sendHabitsToWatch(Array(habits))
                 // Generate suggestions
                 refreshSuggestions()
+
+                // Show widget promo if not dismissed and user has habits
+                if !dismissedWidgetPromo && !habits.isEmpty {
+                    withAnimation(.spring(response: 0.5, dampingFraction: 0.8).delay(0.5)) {
+                        showingWidgetPromo = true
+                    }
+                }
             }
             .onReceive(NotificationCenter.default.publisher(for: .habitsDidChange)) { _ in
                 // Update widgets when completions change
@@ -565,6 +581,19 @@ struct HomeView: View {
                         Label("Delete", systemImage: "trash")
                     }
                 }
+            }
+
+            // Widget Promo Banner (show if not dismissed and user has habits)
+            if showingWidgetPromo {
+                WidgetPromoBanner {
+                    withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                        showingWidgetPromo = false
+                    }
+                }
+                .transition(.asymmetric(
+                    insertion: .scale(scale: 0.95).combined(with: .opacity),
+                    removal: .scale(scale: 0.9).combined(with: .opacity)
+                ))
             }
 
             // Stacks Preview (show if user has 2+ habits)
