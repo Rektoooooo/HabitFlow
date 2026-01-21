@@ -1,7 +1,7 @@
 {
   "images" : [
     {
-      "filename" : "HabitFlow.png",
+      "filename" : "HabitOwl-Logo-Light 1.png",
       "idiom" : "universal",
       "platform" : "ios",
       "size" : "1024x1024"
@@ -13,7 +13,7 @@
           "value" : "dark"
         }
       ],
-      "filename" : "Generated Image January 17, 2026 - 12_31AM.jpeg",
+      "filename" : "HabitOwl-Logo-Dark.png",
       "idiom" : "universal",
       "platform" : "ios",
       "size" : "1024x1024"
@@ -25,7 +25,7 @@
           "value" : "tinted"
         }
       ],
-      "filename" : "Generated Image January 17, 2026 - 12_31AM.jpeg",
+      "filename" : "HabitOwl-Logo-Tinted.png",
       "idiom" : "universal",
       "platform" : "ios",
       "size" : "1024x1024"

@@ -121,6 +121,43 @@ enum AccentColor: String, CaseIterable, Identifiable {
     }
 }
 
+// MARK: - Time of Day (for dynamic header)
+
+enum TimeOfDay: String, CaseIterable {
+    case morning    // 5am - 12pm
+    case afternoon  // 12pm - 5pm
+    case evening    // 5pm - 9pm
+    case night      // 9pm - 5am
+
+    static var current: TimeOfDay {
+        let hour = Calendar.current.component(.hour, from: Date())
+        switch hour {
+        case 5..<12: return .morning
+        case 12..<17: return .afternoon
+        case 17..<21: return .evening
+        default: return .night
+        }
+    }
+
+    var headerImageName: String {
+        switch self {
+        case .morning: return "HeaderMorning"
+        case .afternoon: return "HeaderAfternoon"
+        case .evening: return "HeaderEvening"
+        case .night: return "HeaderNight"
+        }
+    }
+
+    var displayName: String {
+        switch self {
+        case .morning: return "Morning"
+        case .afternoon: return "Afternoon"
+        case .evening: return "Evening"
+        case .night: return "Night"
+        }
+    }
+}
+
 // MARK: - Appearance Mode
 
 enum AppearanceMode: String, CaseIterable, Identifiable {
@@ -159,6 +196,7 @@ class ThemeManager: ObservableObject {
 
     @AppStorage("selectedAccentColor") private var accentColorRaw: String = AccentColor.purple.rawValue
     @AppStorage("selectedAppearanceMode") private var appearanceModeRaw: String = AppearanceMode.system.rawValue
+    @AppStorage("dynamicHeaderEnabled") var dynamicHeaderEnabled: Bool = false
 
     @Published var accentColor: AccentColor = .purple
     @Published var appearanceMode: AppearanceMode = .system
@@ -187,7 +225,17 @@ class ThemeManager: ObservableObject {
         HapticManager.shared.buttonPressed()
     }
 
+    func setDynamicHeader(_ enabled: Bool) {
+        dynamicHeaderEnabled = enabled
+        HapticManager.shared.buttonPressed()
+    }
+
     // MARK: - Computed Properties
+
+    /// Current time-based header image name (only used when dynamicHeaderEnabled is true)
+    var currentHeaderImage: String {
+        TimeOfDay.current.headerImageName
+    }
 
     var primaryColor: Color {
         accentColor.color

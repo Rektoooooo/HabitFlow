@@ -7,6 +7,7 @@
 
 import SwiftUI
 import StoreKit
+import AuthenticationServices
 
 struct SettingsView: View {
     @Environment(\.colorScheme) private var colorScheme
@@ -16,8 +17,12 @@ struct SettingsView: View {
     @ObservedObject private var notificationManager = NotificationManager.shared
     @ObservedObject private var healthKitManager = HealthKitManager.shared
     @ObservedObject private var themeManager = ThemeManager.shared
+    @ObservedObject private var authManager = AuthenticationManager.shared
 
     @State private var showingPaywall = false
+    @State private var showingLogoutConfirmation = false
+    @State private var showingDeleteAccountConfirmation = false
+    @State private var isSigningIn = false
     @State private var iCloudAvailable = false
     @State private var isCheckingICloud = true
 
@@ -62,6 +67,9 @@ struct SettingsView: View {
                         // Data & Privacy Section
                         dataPrivacySection
 
+                        // Account Section
+                        accountSection
+
                         // Support Section
                         supportSection
 
@@ -84,6 +92,24 @@ struct SettingsView: View {
             .navigationBarTitleDisplayMode(.large)
             .sheet(isPresented: $showingPaywall) {
                 PaywallView()
+            }
+            .alert("Sign Out", isPresented: $showingLogoutConfirmation) {
+                Button("Cancel", role: .cancel) { }
+                Button("Sign Out", role: .destructive) {
+                    authManager.signOut()
+                    hasCompletedOnboarding = false
+                }
+            } message: {
+                Text("Are you sure you want to sign out? You'll need to sign in again to access your data.")
+            }
+            .alert("Delete Account", isPresented: $showingDeleteAccountConfirmation) {
+                Button("Cancel", role: .cancel) { }
+                Button("Delete", role: .destructive) {
+                    authManager.signOut()
+                    hasCompletedOnboarding = false
+                }
+            } message: {
+                Text("Are you sure you want to delete your account? Your local data will be removed. This action cannot be undone.")
             }
             .task {
                 await checkiCloudStatus()
@@ -476,6 +502,107 @@ struct SettingsView: View {
                     }
                 }
                 .padding(16)
+            }
+            .liquidGlass(cornerRadius: 20)
+        }
+    }
+
+    // MARK: - Account Section
+
+    private var accountSection: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            Text("Account")
+                .font(.subheadline.weight(.semibold))
+                .foregroundStyle(secondaryText)
+                .padding(.leading, 4)
+
+            VStack(spacing: 0) {
+                if authManager.isGuestUser {
+                    // Guest user - show Sign in with Apple
+                    SignInWithAppleButton(.signIn) { request in
+                        request.requestedScopes = [.fullName, .email]
+                    } onCompletion: { result in
+                        isSigningIn = true
+                        authManager.handleSignInWithApple(result)
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                            isSigningIn = false
+                        }
+                    }
+                    .signInWithAppleButtonStyle(colorScheme == .dark ? .white : .black)
+                    .frame(height: 50)
+                    .padding(16)
+                } else {
+                    // Signed in user - show Logout and Delete Account
+                    Button {
+                        showingLogoutConfirmation = true
+                    } label: {
+                        HStack(spacing: 16) {
+                            ZStack {
+                                RoundedRectangle(cornerRadius: 10)
+                                    .fill(Color.orange.opacity(0.2))
+                                    .frame(width: 40, height: 40)
+
+                                Image(systemName: "rectangle.portrait.and.arrow.right")
+                                    .font(.body)
+                                    .foregroundStyle(.orange)
+                            }
+
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text("Sign Out")
+                                    .font(.body)
+                                    .foregroundStyle(primaryText)
+
+                                Text("Sign out of your account")
+                                    .font(.caption)
+                                    .foregroundStyle(secondaryText)
+                            }
+
+                            Spacer()
+
+                            Image(systemName: "chevron.right")
+                                .font(.subheadline.weight(.semibold))
+                                .foregroundStyle(tertiaryText)
+                        }
+                        .padding(16)
+                    }
+
+                    Divider()
+                        .background(dividerColor)
+                        .padding(.leading, 66)
+
+                    Button {
+                        showingDeleteAccountConfirmation = true
+                    } label: {
+                        HStack(spacing: 16) {
+                            ZStack {
+                                RoundedRectangle(cornerRadius: 10)
+                                    .fill(Color.red.opacity(0.2))
+                                    .frame(width: 40, height: 40)
+
+                                Image(systemName: "trash.fill")
+                                    .font(.body)
+                                    .foregroundStyle(.red)
+                            }
+
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text("Delete Account")
+                                    .font(.body)
+                                    .foregroundStyle(.red)
+
+                                Text("Permanently delete your data")
+                                    .font(.caption)
+                                    .foregroundStyle(secondaryText)
+                            }
+
+                            Spacer()
+
+                            Image(systemName: "chevron.right")
+                                .font(.subheadline.weight(.semibold))
+                                .foregroundStyle(tertiaryText)
+                        }
+                        .padding(16)
+                    }
+                }
             }
             .liquidGlass(cornerRadius: 20)
         }

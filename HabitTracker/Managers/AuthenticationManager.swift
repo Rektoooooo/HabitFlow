@@ -39,6 +39,12 @@ class AuthenticationManager: ObservableObject {
     @Published var isSignedIn: Bool = false
     @Published var currentUser: AppUser?
 
+    /// True if user continued as guest (not signed in with Apple)
+    var isGuestUser: Bool {
+        // Guest users don't have their ID stored in keychain
+        return isSignedIn && getUserID() == nil
+    }
+
     private let userDefaultsKey = "currentUser"
     private let keychainService = "com.habitflow.auth"
     private let keychainAccount = "appleUserID"

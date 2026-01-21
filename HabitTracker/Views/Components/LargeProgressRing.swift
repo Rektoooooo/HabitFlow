@@ -219,6 +219,7 @@ struct SplitProgressHeader: View {
 struct WhiteProgressCard: View {
     @Environment(\.colorScheme) private var colorScheme
     let habits: [Habit]
+    var showDynamicBackground: Bool = false
 
     private var completedToday: Int {
         habits.filter { $0.isCompletedToday }.count
@@ -281,7 +282,8 @@ struct WhiteProgressCard: View {
                             icon: category.icon,
                             color: category.color,
                             completed: category.completed,
-                            total: category.total
+                            total: category.total,
+                            showDynamicBackground: showDynamicBackground
                         )
                     }
 
@@ -297,7 +299,8 @@ struct WhiteProgressCard: View {
                 WhiteProgressRing(
                     progress: progress,
                     completed: completedToday,
-                    total: totalHabits
+                    total: totalHabits,
+                    showDynamicBackground: showDynamicBackground
                 )
             }
         }
@@ -314,6 +317,7 @@ struct WhiteCategoryRow: View {
     let color: Color
     let completed: Int
     let total: Int
+    var showDynamicBackground: Bool = false
 
     var progress: Double {
         guard total > 0 else { return 0 }
@@ -336,9 +340,9 @@ struct WhiteCategoryRow: View {
             // Label - fixed width for consistent progress bar length
             Text(category)
                 .font(.caption.weight(.medium))
-                .foregroundStyle(colorScheme == .dark
+                .foregroundStyle(showDynamicBackground ? .white : (colorScheme == .dark
                     ? Color.white
-                    : Color(red: 0.25, green: 0.20, blue: 0.35))
+                    : Color(red: 0.25, green: 0.20, blue: 0.35)))
                 .lineLimit(1)
                 .frame(width: 50, alignment: .leading)
 
@@ -360,10 +364,18 @@ struct WhiteCategoryRow: View {
             // Count display - fixed width for alignment
             Text("\(completed)/\(total)")
                 .font(.caption2.weight(.medium))
-                .foregroundStyle(colorScheme == .dark
+                .foregroundStyle(showDynamicBackground ? .white.opacity(0.8) : (colorScheme == .dark
                     ? Color.white.opacity(0.7)
-                    : Color(red: 0.45, green: 0.40, blue: 0.55))
+                    : Color(red: 0.45, green: 0.40, blue: 0.55)))
                 .frame(width: 28, alignment: .trailing)
+        }
+        .padding(.horizontal, showDynamicBackground ? 10 : 0)
+        .padding(.vertical, showDynamicBackground ? 6 : 0)
+        .background {
+            if showDynamicBackground {
+                Capsule()
+                    .fill(Color.black.opacity(0.3))
+            }
         }
     }
 }
@@ -376,6 +388,7 @@ struct WhiteProgressRing: View {
     let progress: Double
     let completed: Int
     let total: Int
+    var showDynamicBackground: Bool = false
 
     // Dynamic gradient colors based on theme
     private var progressGradient: AngularGradient {
@@ -432,19 +445,26 @@ struct WhiteProgressRing: View {
             VStack(spacing: 2) {
                 Text("\(Int(progress * 100))%")
                     .font(.system(size: 24, weight: .bold, design: .rounded))
-                    .foregroundStyle(colorScheme == .dark
+                    .foregroundStyle(showDynamicBackground ? .white : (colorScheme == .dark
                         ? Color.white
-                        : Color(red: 0.25, green: 0.20, blue: 0.35))
+                        : Color(red: 0.25, green: 0.20, blue: 0.35)))
                     .contentTransition(.numericText())
 
                 Text("\(completed)/\(total)")
                     .font(.caption2.weight(.medium))
-                    .foregroundStyle(colorScheme == .dark
+                    .foregroundStyle(showDynamicBackground ? .white.opacity(0.8) : (colorScheme == .dark
                         ? Color.white.opacity(0.6)
-                        : Color(red: 0.50, green: 0.45, blue: 0.60))
+                        : Color(red: 0.50, green: 0.45, blue: 0.60)))
             }
         }
         .frame(width: 100, height: 100)
+        .background {
+            if showDynamicBackground {
+                Circle()
+                    .fill(Color.black.opacity(0.3))
+                    .frame(width: 110, height: 110)
+            }
+        }
     }
 }
 
@@ -454,7 +474,7 @@ struct WhiteProgressRing: View {
             .ignoresSafeArea()
 
         VStack(spacing: 20) {
-            WhiteProgressRing(progress: 0.78, completed: 3, total: 4)
+            WhiteProgressRing(progress: 0.78, completed: 3, total: 4, showDynamicBackground: false)
         }
     }
 }

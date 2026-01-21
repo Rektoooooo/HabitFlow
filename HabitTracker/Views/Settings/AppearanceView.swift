@@ -53,6 +53,9 @@ struct AppearanceView: View {
                     // Accent Color
                     accentColorSection
 
+                    // Dynamic Header
+                    dynamicHeaderSection
+
                     // Premium badge if not premium
                     if !storeManager.isPremium {
                         premiumBadge
@@ -239,6 +242,109 @@ struct AppearanceView: View {
         }
     }
 
+    // MARK: - Dynamic Header Section
+
+    private var dynamicHeaderSection: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack {
+                Text("Dynamic Header")
+                    .font(.headline)
+                    .foregroundStyle(primaryText)
+
+                if !storeManager.isPremium {
+                    Text("PRO")
+                        .font(.caption2.weight(.bold))
+                        .foregroundStyle(.white)
+                        .padding(.horizontal, 6)
+                        .padding(.vertical, 2)
+                        .background(
+                            Capsule()
+                                .fill(selectedAccent.gradient)
+                        )
+                }
+            }
+
+            VStack(spacing: 16) {
+                // Toggle
+                HStack {
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("Time-based Background")
+                            .font(.subheadline.weight(.medium))
+                            .foregroundStyle(primaryText)
+
+                        Text("Header changes with time of day")
+                            .font(.caption)
+                            .foregroundStyle(secondaryText)
+                    }
+
+                    Spacer()
+
+                    Toggle("", isOn: Binding(
+                        get: { themeManager.dynamicHeaderEnabled },
+                        set: { newValue in
+                            if storeManager.isPremium {
+                                themeManager.setDynamicHeader(newValue)
+                            } else {
+                                showingPaywall = true
+                            }
+                        }
+                    ))
+                    .tint(selectedAccent.color)
+                    .disabled(!storeManager.isPremium)
+                }
+
+                // Time states preview
+                if themeManager.dynamicHeaderEnabled || storeManager.isPremium {
+                    VStack(spacing: 8) {
+                        HStack(spacing: 8) {
+                            TimeStatePreview(
+                                imageName: "HeaderMorning",
+                                label: "Morning",
+                                time: "5am-12pm",
+                                isActive: TimeOfDay.current == .morning && themeManager.dynamicHeaderEnabled,
+                                accentColor: selectedAccent.color
+                            )
+                            TimeStatePreview(
+                                imageName: "HeaderAfternoon",
+                                label: "Afternoon",
+                                time: "12pm-5pm",
+                                isActive: TimeOfDay.current == .afternoon && themeManager.dynamicHeaderEnabled,
+                                accentColor: selectedAccent.color
+                            )
+                        }
+                        HStack(spacing: 8) {
+                            TimeStatePreview(
+                                imageName: "HeaderEvening",
+                                label: "Evening",
+                                time: "5pm-9pm",
+                                isActive: TimeOfDay.current == .evening && themeManager.dynamicHeaderEnabled,
+                                accentColor: selectedAccent.color
+                            )
+                            TimeStatePreview(
+                                imageName: "HeaderNight",
+                                label: "Night",
+                                time: "9pm-5am",
+                                isActive: TimeOfDay.current == .night && themeManager.dynamicHeaderEnabled,
+                                accentColor: selectedAccent.color
+                            )
+                        }
+                    }
+                }
+            }
+            .padding(16)
+            .liquidGlass(cornerRadius: 20)
+
+            HStack(spacing: 6) {
+                Image(systemName: "sun.horizon.fill")
+                    .font(.caption)
+                Text("Background adapts from sunrise to night")
+                    .font(.caption)
+            }
+            .foregroundStyle(tertiaryText)
+            .padding(.top, 4)
+        }
+    }
+
     // MARK: - Premium Badge
 
     private var premiumBadge: some View {
@@ -389,6 +495,46 @@ struct AccentColorButton: View {
         .accessibilityLabel("\(color.displayName) color")
         .accessibilityHint(isSelected ? "Currently selected" : "Double tap to select")
         .accessibilityAddTraits(isSelected ? .isSelected : [])
+    }
+}
+
+// MARK: - Time State Preview
+
+struct TimeStatePreview: View {
+    let imageName: String
+    let label: String
+    let time: String
+    let isActive: Bool
+    let accentColor: Color
+
+    var body: some View {
+        VStack(spacing: 6) {
+            Image(imageName)
+                .resizable()
+                .aspectRatio(contentMode: .fill)
+                .frame(height: 50)
+                .clipShape(RoundedRectangle(cornerRadius: 8))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 8)
+                        .stroke(isActive ? accentColor : Color.clear, lineWidth: 2)
+                )
+
+            VStack(spacing: 2) {
+                Text(label)
+                    .font(.caption.weight(.medium))
+                    .foregroundStyle(isActive ? accentColor : .primary)
+
+                Text(time)
+                    .font(.caption2)
+                    .foregroundStyle(.secondary)
+            }
+        }
+        .frame(maxWidth: .infinity)
+        .padding(8)
+        .background(
+            RoundedRectangle(cornerRadius: 12)
+                .fill(isActive ? accentColor.opacity(0.1) : Color.clear)
+        )
     }
 }
 

@@ -87,6 +87,20 @@ struct HomeView: View {
 
     // Top color of the section (for safe area fill)
     private var topSectionTopColor: Color {
+        if themeManager.dynamicHeaderEnabled {
+            // Use a color that blends with the top of the current time-based image
+            switch TimeOfDay.current {
+            case .morning:
+                return Color(red: 0.53, green: 0.72, blue: 0.96) // Soft blue from morning image
+            case .afternoon:
+                return Color(red: 0.42, green: 0.73, blue: 0.98) // Bright blue from afternoon
+            case .evening:
+                return Color(red: 0.24, green: 0.18, blue: 0.42) // Deep purple from evening
+            case .night:
+                return Color(red: 0.15, green: 0.12, blue: 0.28) // Dark indigo from night
+            }
+        }
+
         let (r, g, b) = themeManager.accentColor.rgbComponents
 
         if colorScheme == .dark {
@@ -94,6 +108,37 @@ struct HomeView: View {
         } else {
             return Color(red: 0.94 + r * 0.04, green: 0.92 + g * 0.04, blue: 0.96 + b * 0.03)
         }
+    }
+
+    // Dynamic header background view
+    @ViewBuilder
+    private var headerBackground: some View {
+        if themeManager.dynamicHeaderEnabled {
+            Image(themeManager.currentHeaderImage)
+                .resizable()
+                .aspectRatio(contentMode: .fill)
+        } else {
+            topSectionGradient
+        }
+    }
+
+    // Text colors for greeting (adapts to dynamic header)
+    private var greetingSubtitleColor: Color {
+        if themeManager.dynamicHeaderEnabled {
+            // With dark overlay, use light text for all time states
+            return Color.white.opacity(0.85)
+        }
+        return colorScheme == .dark
+            ? Color(red: 0.75, green: 0.70, blue: 0.85)
+            : Color(red: 0.5, green: 0.45, blue: 0.55)
+    }
+
+    private var greetingTitleColor: Color {
+        if themeManager.dynamicHeaderEnabled {
+            // With dark overlay, use white text for all time states
+            return .white
+        }
+        return colorScheme == .dark ? .white : Color(red: 0.15, green: 0.12, blue: 0.25)
     }
 
     // MARK: - Greeting Header
@@ -104,16 +149,15 @@ struct HomeView: View {
             Image("ProfileMascot")
                 .resizable()
                 .aspectRatio(contentMode: .fit)
-                .frame(width: 50, height: 50)
+                .frame(width: 65, height: 65)
 
             // Greeting text
             VStack(alignment: .leading, spacing: 2) {
                 HStack(spacing: 6) {
                     Text(greeting)
                         .font(.subheadline)
-                        .foregroundStyle(colorScheme == .dark
-                            ? Color(red: 0.75, green: 0.70, blue: 0.85)
-                            : Color(red: 0.5, green: 0.45, blue: 0.55))
+                        .foregroundStyle(greetingSubtitleColor)
+                        .shadow(color: themeManager.dynamicHeaderEnabled ? .black.opacity(0.5) : .clear, radius: 3, x: 0, y: 1)
 
                     Text(greetingEmoji)
                         .font(.subheadline)
@@ -121,7 +165,8 @@ struct HomeView: View {
 
                 Text(Date.now.formatted(.dateTime.weekday(.wide).day().month(.abbreviated)))
                     .font(.headline.weight(.semibold))
-                    .foregroundStyle(colorScheme == .dark ? .white : Color(red: 0.15, green: 0.12, blue: 0.25))
+                    .foregroundStyle(greetingTitleColor)
+                    .shadow(color: themeManager.dynamicHeaderEnabled ? .black.opacity(0.5) : .clear, radius: 3, x: 0, y: 1)
             }
 
             Spacer()
@@ -184,36 +229,54 @@ struct HomeView: View {
                 // Layer 3: Top section (on top, habits scroll behind it)
                 VStack(spacing: 0) {
                     ZStack(alignment: .top) {
-                        // Safe area fill (not clipped by wave) - use solid color matching gradient top
-                        topSectionTopColor
-                            .frame(height: 80) // Just the safe area height
+                        // Background layer - extends into safe area
+                        if themeManager.dynamicHeaderEnabled {
+                            // Dynamic header image with overlay for text visibility
+                            GeometryReader { geo in
+                                Image(themeManager.currentHeaderImage)
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fill)
+                                    .frame(width: geo.size.width, height: habits.isEmpty ? 220 : 320)
+                                    .clipped()
+                            }
+                            .frame(height: habits.isEmpty ? 220 : 320)
+                            .clipShape(WaveBottomEdge(amplitude: 25))
                             .ignoresSafeArea(edges: .top)
+                        } else {
+                            // Original gradient background
+                            topSectionTopColor
+                                .frame(height: 80)
+                                .ignoresSafeArea(edges: .top)
 
-                        // Content with wave clip
-                        VStack(spacing: 12) {
+                            VStack {}
+                                .frame(maxWidth: .infinity)
+                                .frame(height: habits.isEmpty ? 180 : 280)
+                                .background(topSectionGradient)
+                                .clipShape(WaveBottomEdge(amplitude: 25))
+                        }
+
+                        // Content layer (text, progress card)
+                        VStack(spacing: 6) {
                             // Greeting header
                             greetingHeader
 
                             // Today's Progress Card
                             if !habits.isEmpty {
-                                WhiteProgressCard(habits: Array(habits))
+                                WhiteProgressCard(habits: Array(habits), showDynamicBackground: themeManager.dynamicHeaderEnabled)
                                     .id(refreshID) // Force re-render when day changes
-                                    .padding(.bottom, 12) // Extra padding from wave
+                                    .padding(.bottom, 8) // Extra padding from wave
                             } else {
                                 Text("Add habits to track progress")
                                     .font(.subheadline)
-                                    .foregroundStyle(colorScheme == .dark
-                                        ? Color(red: 0.7, green: 0.65, blue: 0.8)
-                                        : Color(red: 0.5, green: 0.45, blue: 0.55))
+                                    .foregroundStyle(greetingSubtitleColor)
+                                    .shadow(color: themeManager.dynamicHeaderEnabled ? .black.opacity(0.3) : .clear, radius: 2, x: 0, y: 1)
                                     .padding(.vertical, 12)
                             }
                         }
                         .padding(.horizontal, 20)
-                        .padding(.top, 16)
-                        .padding(.bottom, 35) // Space for wave curve
+                        .padding(.top, 12)
+                        .padding(.bottom, 30) // Space for wave curve
                         .frame(maxWidth: .infinity)
-                        .background(topSectionGradient)
-                        .clipShape(WaveBottomEdge(amplitude: 25))
                     }
 
                     Spacer()
