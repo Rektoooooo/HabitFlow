@@ -131,7 +131,7 @@ struct DataErrorView: View {
                 Text("Unable to Load Data")
                     .font(.title2.weight(.bold))
 
-                Text("Dotti couldn't initialize its database. Please try the following steps:")
+                Text("Habit Owl couldn't initialize its database. Please try the following steps:")
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
                     .multilineTextAlignment(.center)
@@ -142,7 +142,7 @@ struct DataErrorView: View {
             VStack(alignment: .leading, spacing: 12) {
                 RecoveryStepRow(number: 1, text: "Close this app completely (swipe up)")
                 RecoveryStepRow(number: 2, text: "Wait a few seconds")
-                RecoveryStepRow(number: 3, text: "Reopen Dotti")
+                RecoveryStepRow(number: 3, text: "Reopen Habit Owl")
             }
             .padding(.horizontal, 40)
             .padding(.vertical, 16)

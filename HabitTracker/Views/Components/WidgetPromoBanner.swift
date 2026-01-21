@@ -54,7 +54,7 @@ struct WidgetPromoBanner: View {
 
                 // Text content
                 VStack(alignment: .leading, spacing: 8) {
-                    Text("Add Dotti to your Home Screen")
+                    Text("Add Habit Owl to your Home Screen")
                         .font(.subheadline.weight(.semibold))
                         .foregroundStyle(colorScheme == .dark ? .white : Color(hex: "#1F1535"))
 
@@ -216,7 +216,7 @@ struct WidgetInstructionsSheet: View {
             }
 
             VStack(spacing: 6) {
-                Text("Add Dotti Widget")
+                Text("Add Habit Owl Widget")
                     .font(.title2.weight(.bold))
                     .foregroundStyle(colorScheme == .dark ? .white : Color(hex: "#1F1535"))
 
@@ -247,8 +247,8 @@ struct WidgetInstructionsSheet: View {
 
             InstructionStep(
                 number: 3,
-                title: "Search for Dotti",
-                description: "Type \"Dotti\" in the search bar to find the widget",
+                title: "Search for Habit Owl",
+                description: "Type \"Habit Owl\" in the search bar to find the widget",
                 icon: "magnifyingglass"
             )
 

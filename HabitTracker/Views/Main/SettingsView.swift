@@ -719,7 +719,7 @@ struct SettingsView: View {
                 .frame(width: 60, height: 60)
                 .opacity(0.8)
 
-            Text("Dotti")
+            Text("Habit Owl")
                 .font(.headline)
                 .foregroundStyle(secondaryText)
 
@@ -743,8 +743,8 @@ struct SettingsView: View {
     // MARK: - Actions
 
     private func shareApp() {
-        let appURL = URL(string: "https://apps.apple.com/app/dotti/id123456789")! // Replace with actual App Store URL
-        let message = "Check out Dotti - the best app to build better habits!"
+        let appURL = URL(string: "https://apps.apple.com/app/id6757938878")!
+        let message = "Check out Habit Owl - the best app to build better habits!"
 
         let activityVC = UIActivityViewController(
             activityItems: [message, appURL],
@@ -765,7 +765,7 @@ struct SettingsView: View {
 
     private func sendFeedback() {
         let email = "sebastian.kucera@icloud.com"
-        let subject = "Dotti Feedback - v\(appVersion)"
+        let subject = "Habit Owl Feedback - v\(appVersion)"
         let body = "\n\n---\nApp Version: \(appVersion)\niOS Version: \(UIDevice.current.systemVersion)\nDevice: \(UIDevice.current.model)"
 
         let urlString = "mailto:\(email)?subject=\(subject.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? "")&body=\(body.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? "")"

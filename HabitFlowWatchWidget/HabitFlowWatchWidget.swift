@@ -95,7 +95,7 @@ struct HabitFlowWatchWidget: Widget {
             HabitWidgetEntryView(entry: entry)
                 .containerBackground(.fill.tertiary, for: .widget)
         }
-        .configurationDisplayName("Dotti")
+        .configurationDisplayName("Habit Owl")
         .description("Track your daily habits")
         .supportedFamilies([
             .accessoryCircular,
@@ -157,7 +157,7 @@ struct AccessoryRectangularView: View {
                 Image(systemName: "flame.fill")
                     .font(.caption2)
 
-                Text("Dotti")
+                Text("Habit Owl")
                     .font(.caption2.weight(.semibold))
 
                 Spacer()

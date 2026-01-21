@@ -18,6 +18,7 @@ struct HabitTypeCard: View {
     let tertiaryText: Color
     let colorScheme: ColorScheme
     let isSelected: Bool
+    var isLocked: Bool = false
     let action: () -> Void
 
     var body: some View {
@@ -46,7 +47,15 @@ struct HabitTypeCard: View {
                                 .foregroundStyle(.white)
                                 .padding(.horizontal, 8)
                                 .padding(.vertical, 4)
-                                .background(color)
+                                .background(
+                                    badge == "PRO"
+                                        ? LinearGradient(
+                                            colors: [Color(hex: "#A855F7"), Color(hex: "#EC4899")],
+                                            startPoint: .leading,
+                                            endPoint: .trailing
+                                        )
+                                        : LinearGradient(colors: [color, color], startPoint: .leading, endPoint: .trailing)
+                                )
                                 .clipShape(Capsule())
                         }
                     }
@@ -58,7 +67,7 @@ struct HabitTypeCard: View {
 
                 Spacer()
 
-                Image(systemName: "chevron.right")
+                Image(systemName: isLocked ? "lock.fill" : "chevron.right")
                     .font(.subheadline.weight(.semibold))
                     .foregroundStyle(tertiaryText)
             }
@@ -68,8 +77,8 @@ struct HabitTypeCard: View {
         }
         .buttonStyle(.plain)
         .accessibilityElement(children: .combine)
-        .accessibilityLabel("\(title), \(subtitle)")
-        .accessibilityHint("Double tap to select this habit type")
+        .accessibilityLabel("\(title), \(subtitle)\(isLocked ? ", Premium feature" : "")")
+        .accessibilityHint(isLocked ? "Double tap to unlock with Premium" : "Double tap to select this habit type")
     }
 }
 

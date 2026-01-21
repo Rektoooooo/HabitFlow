@@ -95,7 +95,7 @@ struct AppearanceView: View {
                     .font(.system(size: 24, weight: .bold, design: .rounded))
                     .foregroundStyle(primaryText)
 
-                Text("Customize your Dotti experience")
+                Text("Customize your Habit Owl experience")
                     .font(.subheadline)
                     .foregroundStyle(secondaryText)
             }

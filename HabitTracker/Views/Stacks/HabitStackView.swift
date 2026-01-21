@@ -20,6 +20,7 @@ struct StacksView: View {
     @State private var showingCreateStack = false
     @State private var selectedStack: HabitStack?
     @State private var selectedTemplate: StackTemplate?
+    @State private var previewTemplate: StackTemplate?
 
     private var primaryText: Color {
         colorScheme == .dark ? .white : Color(red: 0.2, green: 0.15, blue: 0.3)
@@ -79,6 +80,19 @@ struct StacksView: View {
             .sheet(item: $selectedTemplate) { template in
                 HabitStackBuilderView(template: template)
             }
+            .sheet(item: $previewTemplate) { template in
+                TemplatePreviewView(
+                    template: template,
+                    onAdd: {
+                        previewTemplate = nil
+                        createFromTemplate(template)
+                    },
+                    onCustomize: {
+                        previewTemplate = nil
+                        selectedTemplate = template
+                    }
+                )
+            }
         }
     }
 
@@ -134,7 +148,7 @@ struct StacksView: View {
 
                 Spacer()
 
-                Text("Tap Add to create")
+                Text("Tap to preview")
                     .font(.caption)
                     .foregroundStyle(secondaryText)
             }
@@ -143,11 +157,8 @@ struct StacksView: View {
                 ForEach(StackTemplate.templates) { template in
                     StackTemplateCard(
                         template: template,
-                        onAdd: {
-                            createFromTemplate(template)
-                        },
-                        onCustomize: {
-                            selectedTemplate = template
+                        onPreview: {
+                            previewTemplate = template
                         }
                     )
                 }
@@ -372,11 +383,9 @@ struct StackCard: View {
 
 struct StackTemplateCard: View {
     let template: StackTemplate
-    let onAdd: () -> Void
-    let onCustomize: () -> Void
+    let onPreview: () -> Void
 
     @Environment(\.colorScheme) private var colorScheme
-    @State private var showingHabits = false
 
     private var primaryText: Color {
         colorScheme == .dark ? .white : Color(red: 0.2, green: 0.15, blue: 0.3)
@@ -419,7 +428,8 @@ struct StackTemplateCard: View {
                 .font(.caption)
                 .foregroundStyle(secondaryText)
                 .lineLimit(2)
-                .fixedSize(horizontal: false, vertical: true)
+
+            Spacer(minLength: 0)
 
             // Habit preview (icons)
             HStack(spacing: -6) {
@@ -450,12 +460,12 @@ struct StackTemplateCard: View {
                 Spacer()
             }
 
-            // Add button
-            Button(action: onAdd) {
+            // Preview button
+            Button(action: onPreview) {
                 HStack {
-                    Image(systemName: "plus.circle.fill")
+                    Image(systemName: "eye.fill")
                         .font(.caption)
-                    Text("Add Chain")
+                    Text("Preview")
                         .font(.caption.weight(.semibold))
                 }
                 .foregroundStyle(.white)
@@ -467,6 +477,7 @@ struct StackTemplateCard: View {
             .buttonStyle(.plain)
         }
         .padding(12)
+        .frame(height: 180)
         .background(
             RoundedRectangle(cornerRadius: 16)
                 .fill(colorScheme == .dark ? Color.white.opacity(0.08) : Color.white.opacity(0.7))
@@ -541,6 +552,187 @@ struct CompactStackCard: View {
             )
         }
         .buttonStyle(.plain)
+    }
+}
+
+// MARK: - Template Preview View
+
+struct TemplatePreviewView: View {
+    let template: StackTemplate
+    let onAdd: () -> Void
+    let onCustomize: () -> Void
+
+    @Environment(\.dismiss) private var dismiss
+    @Environment(\.colorScheme) private var colorScheme
+    @ObservedObject private var store = StoreManager.shared
+
+    @State private var showingPaywall = false
+
+    private var primaryText: Color {
+        colorScheme == .dark ? .white : Color(red: 0.2, green: 0.15, blue: 0.3)
+    }
+
+    private var secondaryText: Color {
+        colorScheme == .dark ? .white.opacity(0.7) : Color(red: 0.4, green: 0.35, blue: 0.5)
+    }
+
+    var body: some View {
+        NavigationStack {
+            ZStack {
+                FloatingClouds()
+
+                ScrollView {
+                    VStack(spacing: 24) {
+                        // Header
+                        VStack(spacing: 16) {
+                            ZStack {
+                                Circle()
+                                    .fill(Color(hex: template.color).opacity(0.2))
+                                    .frame(width: 80, height: 80)
+
+                                Image(systemName: template.icon)
+                                    .font(.system(size: 36))
+                                    .foregroundStyle(Color(hex: template.color))
+                            }
+
+                            Text(template.name)
+                                .font(.title2.weight(.bold))
+                                .foregroundStyle(primaryText)
+
+                            Text(template.description)
+                                .font(.subheadline)
+                                .foregroundStyle(secondaryText)
+                                .multilineTextAlignment(.center)
+                        }
+                        .padding(.top, 20)
+
+                        // Habits list
+                        VStack(alignment: .leading, spacing: 16) {
+                            Text("Included Habits")
+                                .font(.headline)
+                                .foregroundStyle(primaryText)
+
+                            VStack(spacing: 0) {
+                                ForEach(Array(template.habits.enumerated()), id: \.element.name) { index, habit in
+                                    HStack(spacing: 12) {
+                                        // Order number
+                                        ZStack {
+                                            Circle()
+                                                .fill(Color(hex: template.color))
+                                                .frame(width: 28, height: 28)
+
+                                            Text("\(index + 1)")
+                                                .font(.caption.weight(.bold))
+                                                .foregroundStyle(.white)
+                                        }
+
+                                        // Habit icon
+                                        ZStack {
+                                            Circle()
+                                                .fill(Color(hex: habit.color).opacity(0.2))
+                                                .frame(width: 40, height: 40)
+
+                                            Image(systemName: habit.icon)
+                                                .font(.body)
+                                                .foregroundStyle(Color(hex: habit.color))
+                                        }
+
+                                        Text(habit.name)
+                                            .font(.subheadline.weight(.medium))
+                                            .foregroundStyle(primaryText)
+
+                                        Spacer()
+                                    }
+                                    .padding(.vertical, 10)
+
+                                    if index < template.habits.count - 1 {
+                                        HStack {
+                                            Rectangle()
+                                                .fill(Color(hex: template.color).opacity(0.3))
+                                                .frame(width: 2, height: 16)
+                                                .padding(.leading, 13)
+                                            Spacer()
+                                        }
+                                    }
+                                }
+                            }
+                            .padding(16)
+                            .liquidGlass(cornerRadius: 16)
+                        }
+
+                        Spacer(minLength: 100)
+                    }
+                    .padding(20)
+                }
+
+                // Bottom buttons
+                VStack {
+                    Spacer()
+
+                    VStack(spacing: 12) {
+                        Button {
+                            if store.isPremium {
+                                onAdd()
+                            } else {
+                                showingPaywall = true
+                            }
+                        } label: {
+                            HStack {
+                                Image(systemName: "plus.circle.fill")
+                                Text("Add Chain")
+                            }
+                            .font(.headline)
+                            .foregroundStyle(.white)
+                            .frame(maxWidth: .infinity)
+                            .frame(height: 52)
+                            .background(Color(hex: template.color))
+                            .clipShape(RoundedRectangle(cornerRadius: 14))
+                        }
+
+                        Button {
+                            if store.isPremium {
+                                onCustomize()
+                            } else {
+                                showingPaywall = true
+                            }
+                        } label: {
+                            HStack {
+                                Image(systemName: "slider.horizontal.3")
+                                Text("Customize")
+                            }
+                            .font(.subheadline.weight(.medium))
+                            .foregroundStyle(Color(hex: template.color))
+                            .frame(maxWidth: .infinity)
+                            .frame(height: 44)
+                            .background(Color(hex: template.color).opacity(0.15))
+                            .clipShape(RoundedRectangle(cornerRadius: 12))
+                        }
+                    }
+                    .padding(20)
+                    .background(
+                        Rectangle()
+                            .fill(.ultraThinMaterial)
+                            .ignoresSafeArea()
+                    )
+                }
+            }
+            .navigationTitle("Preview")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button {
+                        dismiss()
+                    } label: {
+                        Image(systemName: "xmark.circle.fill")
+                            .font(.title2)
+                            .foregroundStyle(secondaryText)
+                    }
+                }
+            }
+            .sheet(isPresented: $showingPaywall) {
+                PaywallView()
+            }
+        }
     }
 }
 

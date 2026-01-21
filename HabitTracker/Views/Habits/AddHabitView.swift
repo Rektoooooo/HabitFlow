@@ -14,6 +14,7 @@ struct AddHabitView: View {
     @Environment(\.colorScheme) private var colorScheme
     @ObservedObject private var healthKitManager = HealthKitManager.shared
     @ObservedObject private var themeManager = ThemeManager.shared
+    @ObservedObject private var store = StoreManager.shared
 
     // Step management
     @State private var currentStep = 0 // 0 = type selection, 1 = details
@@ -39,6 +40,9 @@ struct AddHabitView: View {
 
     // HealthKit permission
     @State private var showingHealthKitPermission = false
+
+    // Premium paywall
+    @State private var showingPaywall = false
 
     let icons = [
         "checkmark.circle.fill", "star.fill", "heart.fill", "bolt.fill",
@@ -132,6 +136,9 @@ struct AddHabitView: View {
                     }
                 )
             }
+            .sheet(isPresented: $showingPaywall) {
+                PaywallView()
+            }
         }
     }
 
@@ -169,6 +176,22 @@ struct AddHabitView: View {
                         .font(.headline)
                         .foregroundStyle(primaryText)
                     Spacer()
+
+                    if !store.isPremium {
+                        Text("PRO")
+                            .font(.caption2.weight(.bold))
+                            .foregroundStyle(.white)
+                            .padding(.horizontal, 6)
+                            .padding(.vertical, 2)
+                            .background(
+                                LinearGradient(
+                                    colors: [Color(hex: "#A855F7"), Color(hex: "#EC4899")],
+                                    startPoint: .leading,
+                                    endPoint: .trailing
+                                )
+                            )
+                            .clipShape(Capsule())
+                    }
                 }
                 .padding(.top, 12)
 
@@ -178,14 +201,19 @@ struct AddHabitView: View {
                     subtitle: "Track hours of sleep",
                     icon: "bed.double.fill",
                     color: Color(hex: "#8B5CF6"),
-                    badge: "Auto-sync",
+                    badge: store.isPremium ? "Auto-sync" : "PRO",
                     primaryText: primaryText,
                     secondaryText: secondaryText,
                     tertiaryText: tertiaryText,
                     colorScheme: colorScheme,
-                    isSelected: false
+                    isSelected: false,
+                    isLocked: !store.isPremium
                 ) {
-                    selectHealthKitType(.healthKitSleep, name: "Sleep", icon: "bed.double.fill", color: "#8B5CF6")
+                    if store.isPremium {
+                        selectHealthKitType(.healthKitSleep, name: "Sleep", icon: "bed.double.fill", color: "#8B5CF6")
+                    } else {
+                        showingPaywall = true
+                    }
                 }
 
                 // Water Tracking
@@ -194,14 +222,19 @@ struct AddHabitView: View {
                     subtitle: "Track daily hydration in ml",
                     icon: "drop.fill",
                     color: Color(hex: "#06B6D4"),
-                    badge: "Auto-sync",
+                    badge: store.isPremium ? "Auto-sync" : "PRO",
                     primaryText: primaryText,
                     secondaryText: secondaryText,
                     tertiaryText: tertiaryText,
                     colorScheme: colorScheme,
-                    isSelected: false
+                    isSelected: false,
+                    isLocked: !store.isPremium
                 ) {
-                    selectHealthKitType(.healthKitWater, name: "Water", icon: "drop.fill", color: "#06B6D4")
+                    if store.isPremium {
+                        selectHealthKitType(.healthKitWater, name: "Water", icon: "drop.fill", color: "#06B6D4")
+                    } else {
+                        showingPaywall = true
+                    }
                 }
 
                 // Calories Tracking
@@ -210,14 +243,19 @@ struct AddHabitView: View {
                     subtitle: "Track dietary calories",
                     icon: "flame.fill",
                     color: Color(hex: "#F59E0B"),
-                    badge: "Auto-sync",
+                    badge: store.isPremium ? "Auto-sync" : "PRO",
                     primaryText: primaryText,
                     secondaryText: secondaryText,
                     tertiaryText: tertiaryText,
                     colorScheme: colorScheme,
-                    isSelected: false
+                    isSelected: false,
+                    isLocked: !store.isPremium
                 ) {
-                    selectHealthKitType(.healthKitCalories, name: "Calories", icon: "flame.fill", color: "#F59E0B")
+                    if store.isPremium {
+                        selectHealthKitType(.healthKitCalories, name: "Calories", icon: "flame.fill", color: "#F59E0B")
+                    } else {
+                        showingPaywall = true
+                    }
                 }
             }
             .padding(20)
@@ -663,6 +701,22 @@ struct AddHabitView: View {
                         Text("Focus Sessions")
                             .font(.headline)
                             .foregroundStyle(primaryText)
+
+                        if !store.isPremium {
+                            Text("PRO")
+                                .font(.caption2.weight(.bold))
+                                .foregroundStyle(.white)
+                                .padding(.horizontal, 6)
+                                .padding(.vertical, 2)
+                                .background(
+                                    LinearGradient(
+                                        colors: [Color(hex: "#A855F7"), Color(hex: "#EC4899")],
+                                        startPoint: .leading,
+                                        endPoint: .trailing
+                                    )
+                                )
+                                .clipShape(Capsule())
+                        }
                     }
 
                     Text("Use a timer to stay focused on this habit")
@@ -672,12 +726,22 @@ struct AddHabitView: View {
 
                 Spacer()
 
-                Toggle("", isOn: $focusEnabled)
-                    .tint(accentColor)
-                    .labelsHidden()
+                if store.isPremium {
+                    Toggle("", isOn: $focusEnabled)
+                        .tint(accentColor)
+                        .labelsHidden()
+                } else {
+                    Button {
+                        showingPaywall = true
+                    } label: {
+                        Image(systemName: "lock.fill")
+                            .font(.body)
+                            .foregroundStyle(tertiaryText)
+                    }
+                }
             }
 
-            if focusEnabled {
+            if focusEnabled && store.isPremium {
                 HStack(spacing: 8) {
                     Image(systemName: "info.circle")
                         .font(.caption)
@@ -690,6 +754,11 @@ struct AddHabitView: View {
         .padding(16)
         .liquidGlass(cornerRadius: 20)
         .animation(.spring(response: 0.4, dampingFraction: 0.8), value: focusEnabled)
+        .onTapGesture {
+            if !store.isPremium {
+                showingPaywall = true
+            }
+        }
     }
 
     // MARK: - Rest Days Section

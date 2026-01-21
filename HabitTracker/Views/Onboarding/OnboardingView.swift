@@ -150,7 +150,7 @@ struct OnboardingView: View {
                 .shadow(color: Color(hex: "#A855F7").opacity(0.5), radius: 30, x: 0, y: 10)
 
             // App name
-            Text("Dotti")
+            Text("Habit Owl")
                 .font(.system(size: 42, weight: .bold, design: .rounded))
                 .foregroundStyle(
                     LinearGradient(

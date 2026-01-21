@@ -120,7 +120,7 @@ struct PaywallView: View {
                 .frame(width: 120, height: 120)
 
             VStack(spacing: 8) {
-                Text("Unlock Dotti Premium")
+                Text("Unlock Habit Owl Premium")
                     .font(.system(size: 28, weight: .bold, design: .rounded))
                     .foregroundStyle(primaryText)
 
@@ -316,8 +316,12 @@ struct PaywallView: View {
                 .padding(.horizontal, 20)
 
             HStack(spacing: 20) {
-                Link("Terms of Use", destination: URL(string: "https://habitflow.app/terms")!)
-                Link("Privacy Policy", destination: URL(string: "https://habitflow.app/privacy")!)
+                if let termsURL = URL(string: "https://sebkucera.dev/dottihabits/tos") {
+                    Link("Terms of Use", destination: termsURL)
+                }
+                if let privacyURL = URL(string: "https://sebkucera.dev/dottihabits/privacy-policy") {
+                    Link("Privacy Policy", destination: privacyURL)
+                }
             }
             .font(.caption)
             .foregroundStyle(secondaryText)

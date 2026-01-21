@@ -55,7 +55,7 @@ class InsightsEngine: ObservableObject {
     private func createStarterInsight() -> Insight {
         Insight(
             type: .motivation,
-            title: "Welcome to Dotti!",
+            title: "Welcome to Habit Owl!",
             message: "Add your first habit to start tracking and receive personalized insights.",
             priority: .high,
             isPositive: true

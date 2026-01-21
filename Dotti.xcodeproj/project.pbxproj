@@ -749,7 +749,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = "HabitFlowWatch Watch App/HabitFlowWatch Watch App.entitlements";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_TEAM = PH3V9JYRDW;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -783,7 +783,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = "HabitFlowWatch Watch App/HabitFlowWatch Watch App.entitlements";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_TEAM = PH3V9JYRDW;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -814,7 +814,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_TEAM = PH3V9JYRDW;
 				INFOPLIST_KEY_CFBundleDisplayName = HabitFlowWatch;
 				MARKETING_VERSION = 1.0;
@@ -830,7 +830,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_TEAM = PH3V9JYRDW;
 				INFOPLIST_KEY_CFBundleDisplayName = HabitFlowWatch;
 				MARKETING_VERSION = 1.0;
@@ -939,7 +939,7 @@
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
 				CODE_SIGN_ENTITLEMENTS = HabitFlowWatchWidgetExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_TEAM = PH3V9JYRDW;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = HabitFlowWatchWidget/Info.plist;
@@ -973,7 +973,7 @@
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
 				CODE_SIGN_ENTITLEMENTS = HabitFlowWatchWidgetExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_TEAM = PH3V9JYRDW;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = HabitFlowWatchWidget/Info.plist;
@@ -1132,10 +1132,10 @@
 				DEVELOPMENT_TEAM = PH3V9JYRDW;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = "Dotti Habits";
+				INFOPLIST_KEY_CFBundleDisplayName = "Habit Owl";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.lifestyle";
-				INFOPLIST_KEY_NSHealthShareUsageDescription = "Dotti uses your health data to automatically track sleep, water intake, and calories for your habits.";
-				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "Dotti can save your habit progress to Apple Health to help you track your wellness journey.";
+				INFOPLIST_KEY_NSHealthShareUsageDescription = "Habit Owl uses your health data to automatically track sleep, water intake, and calories for your habits.";
+				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "Habit Owl can save your habit progress to Apple Health to help you track your wellness journey.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UIBackgroundModes = "fetch remote-notification";
@@ -1170,10 +1170,10 @@
 				DEVELOPMENT_TEAM = PH3V9JYRDW;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = "Dotti Habits";
+				INFOPLIST_KEY_CFBundleDisplayName = "Habit Owl";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.lifestyle";
-				INFOPLIST_KEY_NSHealthShareUsageDescription = "Dotti uses your health data to automatically track sleep, water intake, and calories for your habits.";
-				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "Dotti can save your habit progress to Apple Health to help you track your wellness journey.";
+				INFOPLIST_KEY_NSHealthShareUsageDescription = "Habit Owl uses your health data to automatically track sleep, water intake, and calories for your habits.";
+				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "Habit Owl can save your habit progress to Apple Health to help you track your wellness journey.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UIBackgroundModes = "fetch remote-notification";
@@ -1288,7 +1288,7 @@
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
 				CODE_SIGN_ENTITLEMENTS = HabitFlowWidget/HabitFlowWidget.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_TEAM = PH3V9JYRDW;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = HabitFlowWidget/Info.plist;
@@ -1319,7 +1319,7 @@
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
 				CODE_SIGN_ENTITLEMENTS = HabitFlowWidget/HabitFlowWidget.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_TEAM = PH3V9JYRDW;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = HabitFlowWidget/Info.plist;

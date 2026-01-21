@@ -58,15 +58,16 @@ struct StacksPreviewSection: View {
             // Create stack button if no stacks
             if stacks.isEmpty {
                 Button {
-                    onCreateStack()
+                    onShowStacks()
                 } label: {
                     HStack(spacing: 8) {
                         Image(systemName: "plus.circle.fill")
                             .font(.subheadline)
+                            .foregroundStyle(Color(hex: "#8B5CF6"))
                         Text("Create a habit chain")
                             .font(.subheadline.weight(.medium))
+                            .foregroundStyle(colorScheme == .dark ? .white : .black)
                     }
-                    .foregroundStyle(Color(hex: "#8B5CF6"))
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 14)
                     .background(

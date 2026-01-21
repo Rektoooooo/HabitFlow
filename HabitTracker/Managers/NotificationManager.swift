@@ -81,7 +81,7 @@ class NotificationManager: ObservableObject {
 
         let content = UNMutableNotificationContent()
         content.title = "Time to check your habits!"
-        content.body = "Don't break your streak. Open Dotti to track your progress."
+        content.body = "Don't break your streak. Open Habit Owl to track your progress."
         content.sound = .default
         content.badge = 1
 

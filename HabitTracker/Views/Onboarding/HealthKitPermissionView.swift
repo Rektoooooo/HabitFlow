@@ -66,7 +66,7 @@ struct HealthKitPermissionView: View {
                             .font(.title2.weight(.bold))
                             .foregroundStyle(primaryText)
 
-                        Text("Allow Dotti to read your \(dataTypeDescription) data to automatically track your progress.")
+                        Text("Allow Habit Owl to read your \(dataTypeDescription) data to automatically track your progress.")
                             .font(.subheadline)
                             .foregroundStyle(secondaryText)
                             .multilineTextAlignment(.center)

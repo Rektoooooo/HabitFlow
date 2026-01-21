@@ -60,7 +60,7 @@ struct ContentView: View {
                     .padding(.horizontal, 2)
                 }
             }
-            .navigationTitle("Dotti")
+            .navigationTitle("Habit Owl")
             .navigationBarTitleDisplayMode(.inline)
         }
         .onAppear {
@@ -136,7 +136,7 @@ struct ContentView: View {
                 .font(.system(size: 16, weight: .semibold))
                 .foregroundStyle(.white)
 
-            Text("Open Dotti on your iPhone to add habits")
+            Text("Open Habit Owl on your iPhone to add habits")
                 .font(.system(size: 11))
                 .foregroundStyle(.gray)
                 .multilineTextAlignment(.center)

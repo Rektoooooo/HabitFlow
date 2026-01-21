@@ -20,6 +20,7 @@ struct SuggestionsView: View {
     @State private var suggestions: [HabitSuggestion] = []
     @State private var selectedSuggestion: HabitSuggestion?
     @State private var showingAddHabit = false
+    @State private var showingPaywall = false
 
     private var primaryText: Color {
         colorScheme == .dark ? .white : Color(red: 0.15, green: 0.12, blue: 0.25)
@@ -35,21 +36,26 @@ struct SuggestionsView: View {
                 // Background
                 FloatingClouds()
 
-                ScrollView {
-                    VStack(spacing: 20) {
-                        // Header explanation
-                        headerSection
+                if store.isPremium {
+                    ScrollView {
+                        VStack(spacing: 20) {
+                            // Header explanation
+                            headerSection
 
-                        if suggestions.isEmpty {
-                            emptyState
-                        } else {
-                            // Suggestions grouped by category
-                            suggestionsSection
+                            if suggestions.isEmpty {
+                                emptyState
+                            } else {
+                                // Suggestions grouped by category
+                                suggestionsSection
+                            }
+
+                            Spacer(minLength: 40)
                         }
-
-                        Spacer(minLength: 40)
+                        .padding(20)
                     }
-                    .padding(20)
+                } else {
+                    // Premium locked state
+                    premiumLockedView
                 }
             }
             .navigationTitle("Suggestions")
@@ -67,9 +73,97 @@ struct SuggestionsView: View {
                     AddHabitFromSuggestionView(suggestion: suggestion)
                 }
             }
-            .onAppear {
-                refreshSuggestions()
+            .sheet(isPresented: $showingPaywall) {
+                PaywallView()
             }
+            .onAppear {
+                if store.isPremium {
+                    refreshSuggestions()
+                }
+            }
+        }
+    }
+
+    // MARK: - Premium Locked View
+
+    private var premiumLockedView: some View {
+        VStack(spacing: 24) {
+            Spacer()
+
+            ZStack {
+                Circle()
+                    .fill(
+                        LinearGradient(
+                            colors: [Color(hex: "#A855F7").opacity(0.2), Color(hex: "#EC4899").opacity(0.2)],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                    )
+                    .frame(width: 100, height: 100)
+
+                Image(systemName: "sparkles")
+                    .font(.system(size: 44, weight: .semibold))
+                    .foregroundStyle(
+                        LinearGradient(
+                            colors: [Color(hex: "#A855F7"), Color(hex: "#EC4899")],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                    )
+            }
+
+            VStack(spacing: 12) {
+                HStack(spacing: 6) {
+                    Text("Smart Suggestions")
+                        .font(.title2.weight(.bold))
+                        .foregroundStyle(primaryText)
+
+                    Text("PRO")
+                        .font(.caption.weight(.bold))
+                        .foregroundStyle(.white)
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 4)
+                        .background(
+                            LinearGradient(
+                                colors: [Color(hex: "#A855F7"), Color(hex: "#EC4899")],
+                                startPoint: .leading,
+                                endPoint: .trailing
+                            )
+                        )
+                        .clipShape(Capsule())
+                }
+
+                Text("Get personalized habit recommendations based on your patterns and goals.")
+                    .font(.subheadline)
+                    .foregroundStyle(secondaryText)
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal, 32)
+            }
+
+            Button {
+                showingPaywall = true
+            } label: {
+                HStack {
+                    Image(systemName: "crown.fill")
+                    Text("Unlock with Premium")
+                }
+                .font(.headline)
+                .foregroundStyle(.white)
+                .frame(maxWidth: .infinity)
+                .frame(height: 56)
+                .background(
+                    LinearGradient(
+                        colors: [Color(hex: "#A855F7"), Color(hex: "#EC4899")],
+                        startPoint: .leading,
+                        endPoint: .trailing
+                    )
+                )
+                .clipShape(RoundedRectangle(cornerRadius: 16))
+            }
+            .padding(.horizontal, 40)
+            .padding(.top, 8)
+
+            Spacer()
         }
     }
 

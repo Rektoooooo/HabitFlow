@@ -13,6 +13,7 @@ struct HabitStackBuilderView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.colorScheme) private var colorScheme
     @ObservedObject private var themeManager = ThemeManager.shared
+    @ObservedObject private var store = StoreManager.shared
 
     @Query(sort: \Habit.createdAt, order: .reverse) private var allHabits: [Habit]
 
@@ -21,6 +22,7 @@ struct HabitStackBuilderView: View {
     @State private var selectedColor = "#A855F7"
     @State private var selectedHabits: [Habit] = []
     @State private var currentStep = 0 // 0 = select habits, 1 = customize
+    @State private var showingPaywall = false
 
     let existingStack: HabitStack?
     let template: StackTemplate?
@@ -96,13 +98,21 @@ struct HabitStackBuilderView: View {
                 ToolbarItem(placement: .confirmationAction) {
                     if currentStep == 0 {
                         Button("Next") {
-                            withAnimation { currentStep = 1 }
+                            if store.isPremium {
+                                withAnimation { currentStep = 1 }
+                            } else {
+                                showingPaywall = true
+                            }
                         }
                         .disabled(selectedHabits.count < 2)
                         .foregroundStyle(selectedHabits.count >= 2 ? accentColor : tertiaryText)
                     } else {
                         Button("Save") {
-                            saveStack()
+                            if store.isPremium {
+                                saveStack()
+                            } else {
+                                showingPaywall = true
+                            }
                         }
                         .disabled(stackName.isEmpty)
                         .foregroundStyle(stackName.isEmpty ? tertiaryText : accentColor)
@@ -116,6 +126,9 @@ struct HabitStackBuilderView: View {
                     loadTemplate(template)
                 }
             }
+            .sheet(isPresented: $showingPaywall) {
+                PaywallView()
+            }
         }
     }
 
@@ -126,9 +139,28 @@ struct HabitStackBuilderView: View {
             VStack(spacing: 20) {
                 // Instructions
                 VStack(spacing: 8) {
-                    Image(systemName: template?.icon ?? "link.circle.fill")
-                        .font(.system(size: 40))
-                        .foregroundStyle(Color(hex: template?.color ?? "#A855F7"))
+                    ZStack(alignment: .topTrailing) {
+                        Image(systemName: template?.icon ?? "link.circle.fill")
+                            .font(.system(size: 40))
+                            .foregroundStyle(Color(hex: template?.color ?? "#A855F7"))
+
+                        if !store.isPremium {
+                            Text("PRO")
+                                .font(.caption2.weight(.bold))
+                                .foregroundStyle(.white)
+                                .padding(.horizontal, 6)
+                                .padding(.vertical, 2)
+                                .background(
+                                    LinearGradient(
+                                        colors: [Color(hex: "#A855F7"), Color(hex: "#EC4899")],
+                                        startPoint: .leading,
+                                        endPoint: .trailing
+                                    )
+                                )
+                                .clipShape(Capsule())
+                                .offset(x: 20, y: -10)
+                        }
+                    }
 
                     Text(template?.name ?? "Build Your Chain")
                         .font(.title3.weight(.bold))
