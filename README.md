@@ -1,6 +1,22 @@
-# HabitFlow
+# Habit Owl
+
+<p align="center">
+  <img src="screenshots/HabitOwl-Logo-Light.png" alt="Habit Owl Logo" width="200"/>
+</p>
+
+<p align="center">
+  <strong>Build Better Habits, One Day at a Time</strong>
+</p>
 
 A beautiful, modern habit tracking app for iOS built with SwiftUI and SwiftData.
+
+## Screenshots
+
+<p align="center">
+  <img src="screenshots/HabitOwl-AppStore-01.png" alt="Build Better Habits" width="250"/>
+  <img src="screenshots/HabitOwl-AppStore-03.png" alt="Stay Focused with Built-in Timers" width="250"/>
+  <img src="screenshots/HabitOwl-AppStore-02.png" alt="Track Any Habits or Health Metric" width="250"/>
+</p>
 
 ## Features
 
@@ -109,13 +125,13 @@ The app uses App Group `group.ic-servis.com.HabitTracker` for sharing data betwe
 
 1. Clone the repository
 ```bash
-git clone https://github.com/Rektoooooo/HabitFlow.git
+git clone https://github.com/Rektoooooo/HabitTracker.git
 ```
 
 2. Open in Xcode
 ```bash
-cd HabitFlow
-open HabitTracker.xcodeproj
+cd HabitTracker
+open Dotti.xcodeproj
 ```
 
 3. Configure signing
