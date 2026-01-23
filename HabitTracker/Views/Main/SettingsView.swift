@@ -32,11 +32,11 @@ struct SettingsView: View {
     }
 
     private var secondaryText: Color {
-        colorScheme == .dark ? .white.opacity(0.7) : Color(red: 0.4, green: 0.35, blue: 0.5)
+        colorScheme == .dark ? .white.opacity(0.7) : Color(red: 0.3, green: 0.3, blue: 0.35)
     }
 
     private var tertiaryText: Color {
-        colorScheme == .dark ? .white.opacity(0.5) : Color(red: 0.5, green: 0.45, blue: 0.6)
+        colorScheme == .dark ? .white.opacity(0.5) : Color(red: 0.45, green: 0.45, blue: 0.5)
     }
 
     private var accentColor: Color {
@@ -690,7 +690,7 @@ struct SettingsView: View {
                     secondaryText: secondaryText,
                     tertiaryText: tertiaryText
                 ) {
-                    openURL("https://sebkucera.dev/dottihabits/privacy-policy")
+                    openURL("https://sebkucera.dev/habitowl/privacy-policy")
                 }
 
                 Divider()
@@ -707,7 +707,7 @@ struct SettingsView: View {
                     secondaryText: secondaryText,
                     tertiaryText: tertiaryText
                 ) {
-                    openURL("https://sebkucera.dev/dottihabits/tos")
+                    openURL("https://sebkucera.dev/habitowl/tos")
                 }
             }
             .liquidGlass(cornerRadius: 20)

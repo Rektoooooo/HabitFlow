@@ -295,7 +295,7 @@ struct PaywallView: View {
     // MARK: - Legal
 
     private var legalSection: some View {
-        VStack(spacing: 12) {
+        VStack(spacing: 16) {
             // Guarantee
             HStack(spacing: 8) {
                 Image(systemName: "checkmark.shield.fill")
@@ -309,22 +309,55 @@ struct PaywallView: View {
             .background(Color.green.opacity(0.1))
             .clipShape(Capsule())
 
-            Text("Cancel anytime. Subscription auto-renews unless turned off at least 24 hours before the period ends. Manage in Settings.")
-                .font(.caption2)
-                .foregroundStyle(tertiaryText)
-                .multilineTextAlignment(.center)
-                .padding(.horizontal, 20)
-
-            HStack(spacing: 20) {
-                if let termsURL = URL(string: "https://sebkucera.dev/dottihabits/tos") {
-                    Link("Terms of Use", destination: termsURL)
-                }
-                if let privacyURL = URL(string: "https://sebkucera.dev/dottihabits/privacy-policy") {
-                    Link("Privacy Policy", destination: privacyURL)
+            // Subscription terms - required by App Store
+            VStack(spacing: 8) {
+                if let product = selectedProduct {
+                    if product.type == .autoRenewable {
+                        Text("Subscription auto-renews at \(product.displayPrice)/\(product.subscription?.subscriptionPeriod.unit == .year ? "year" : "month") unless cancelled at least 24 hours before the current period ends. Manage subscriptions in Settings.")
+                            .font(.caption)
+                            .foregroundStyle(secondaryText)
+                            .multilineTextAlignment(.center)
+                    }
+                } else {
+                    Text("Cancel anytime. Subscription auto-renews unless turned off at least 24 hours before the period ends. Manage in Settings.")
+                        .font(.caption)
+                        .foregroundStyle(secondaryText)
+                        .multilineTextAlignment(.center)
                 }
             }
-            .font(.caption)
-            .foregroundStyle(secondaryText)
+            .padding(.horizontal, 20)
+
+            // Terms and Privacy links - required by App Store
+            HStack(spacing: 24) {
+                if let termsURL = URL(string: "https://sebkucera.dev/habitowl/tos") {
+                    Link(destination: termsURL) {
+                        HStack(spacing: 4) {
+                            Image(systemName: "doc.text")
+                                .font(.caption)
+                            Text("Terms of Use")
+                        }
+                    }
+                    .accessibilityLabel("Terms of Use")
+                    .accessibilityHint("Opens terms of use in browser")
+                }
+
+                Text("•")
+                    .foregroundStyle(tertiaryText)
+
+                if let privacyURL = URL(string: "https://sebkucera.dev/habitowl/privacy-policy") {
+                    Link(destination: privacyURL) {
+                        HStack(spacing: 4) {
+                            Image(systemName: "hand.raised")
+                                .font(.caption)
+                            Text("Privacy Policy")
+                        }
+                    }
+                    .accessibilityLabel("Privacy Policy")
+                    .accessibilityHint("Opens privacy policy in browser")
+                }
+            }
+            .font(.subheadline.weight(.medium))
+            .foregroundStyle(accentPurple)
         }
         .padding(.top, 8)
     }
